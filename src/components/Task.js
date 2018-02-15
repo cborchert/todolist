@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./Task.scss";
+import "font-awesome/css/font-awesome.min.css";
 
 class Task extends Component {
   constructor(props) {
@@ -25,7 +26,6 @@ class Task extends Component {
   }
 
   timerTime(task) {
-    console.log("activeTimer", this.activeTimer().startTime);
     return this.activeTimer() === false
       ? 0
       : Date.now() - this.activeTimer().startTime;
@@ -126,7 +126,7 @@ class Task extends Component {
       //     : this.formatTime(task.totalTime);
       timeText = this.formatTime(task.totalTime + this.state.timerTime);
     return (
-      <div className={taskClasses.join(" ")}>
+      <div className={taskClasses.join(" ")} draggable="true">
         <button
           className="task__progress-button"
           onClick={this.progressToggle.bind(this)}
@@ -149,7 +149,10 @@ class Task extends Component {
           className="task__timer-button"
           onClick={this.timerToggle.bind(this)}
         >
-          <span className="task__time">{timeText}</span>
+          <span className="task__time">
+            <i className="fa fa-clock-o" />
+            {" " + timeText}
+          </span>
         </button>
         <button
           className="task__remove-button"

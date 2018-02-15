@@ -8,8 +8,26 @@ class Tasklist extends Component {
     super(props);
     this.taskRefs = [];
     this.state = {
-      focusOnTask: false
+      focusOnTask: false,
+      totalTime: 0
     };
+    this.timerInterval = null;
+  }
+
+  timeTick() {
+    this.setState({
+      ...this.state,
+      totalTime: this.totalTasksTime()
+    });
+  }
+
+  totalTasksTime() {
+    const { tasks, taskTotalTime } = this.props;
+    let time = 0;
+    tasks.forEach(task => {
+      time += taskTotalTime(task);
+    });
+    return time;
   }
 
   newTask(order) {
@@ -29,6 +47,14 @@ class Tasklist extends Component {
     if (this.taskRefs.filter(taskRef => taskRef.id === id).length === 0) {
       this.taskRefs = [...this.taskRefs, { ref, id }];
     }
+  }
+
+  componentDidMount() {
+    this.timerInterval = setInterval(this.timeTick.bind(this), 100);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerInterval);
   }
 
   componentDidUpdate() {
@@ -52,6 +78,7 @@ class Tasklist extends Component {
     return (
       <div className="tasklist">
         <h2 className="tasklist__title">Tasklist</h2>
+        <span>{this.state.totalTime / 1000 + "s"}</span>
         <div className="tasklist__tasks">
           {tasks.map((task, i) => {
             return (

@@ -64,6 +64,26 @@ class App extends Component {
     });
   }
 
+  taskActiveTimer(task) {
+    const activeTimers = task.timers.filter(
+      timer => timer.startTime && !timer.endTime
+    );
+    if (activeTimers.length > 0) {
+      return activeTimers.slice(0, 1)[0];
+    } else {
+      return false;
+    }
+  }
+
+  taskTimerTime(task) {
+    let activeTimer = this.taskActiveTimer(task);
+    return activeTimer === false ? 0 : Date.now() - activeTimer.startTime;
+  }
+
+  taskTotalTime(task) {
+    return task.totalTime + this.taskTimerTime(task);
+  }
+
   orderTasks(taskList) {
     return taskList.map((task, i) => {
       task.order = i;
@@ -98,6 +118,9 @@ class App extends Component {
           addTask={this.addTask.bind(this)}
           changeTaskDetail={this.changeTaskDetail.bind(this)}
           removeTask={this.removeTask.bind(this)}
+          taskActiveTimer={this.taskActiveTimer.bind(this)}
+          taskTimerTime={this.taskActiveTimer.bind(this)}
+          taskTotalTime={this.taskTotalTime.bind(this)}
         />
       </div>
     );
