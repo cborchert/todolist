@@ -6,9 +6,10 @@
     align-items: center;
 
     &__progress-button{
-        flex-shrink: 0;
         background: transparent;
         border-bottom-color: transparent;
+        width: 50px;
+        text-align: center;
         &:hover {
             background: $gray;
             border-bottom-color: darken($gray, 10%);
@@ -18,30 +19,34 @@
         flex-grow: 1;
     }
     &__timer-button {
-        min-width: 100px;
+        width: 150px;
+        box-sizing: border-box;
+        padding-left: 0;
+        padding-right: 0;
         text-align: center;
     }
     &__time {
         box-sizing: border-box;
-        min-width: 150px;
+        width: 100%;
+        display: inline-block;
         text-align: center;
-        height: 2.5rem;
         border: none;
         background: transparent;
         padding: 0.25rem 0.5rem;
         position: relative;
-        overflow: hidden;
+        z-index: 0;
         &:before {
             content: " ";
             display: block;
             background: transparent;
             position: absolute;
-            bottom: 0;
+            bottom: -3px;
             left: 0;
             width: 0;
             height: 0;
             border-radius: 100%;
             opacity: 0.75;
+            z-index: 1;
         }
     }
     
@@ -49,6 +54,8 @@
         background: $red;
         border-bottom-color: $red;
         color: white;
+        width: 40px;
+        text-align: center;
         &:hover {
             background: darken($red, 10%);
             border-bottom-color: darken($red, 10%);
@@ -95,13 +102,11 @@
     from {
         width: 10px;
         height: 10px;
-        bottom: -10px;
         left: 0px;
     }
     to {
         width: 10px;
         height: 10px;
-        bottom: -10px;
         left: calc(100% - 10px);
     }
 }

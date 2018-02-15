@@ -1,51 +1,31 @@
 import React, { Component } from "react";
 import "./Task.scss";
-import "font-awesome/css/font-awesome.min.css";
+import {
+  totalTasksTime,
+  taskTotalTime,
+  taskTimerTime,
+  taskActiveTimer,
+  formatTime
+} from "../utilities/TaskOperations";
 
 class Task extends Component {
   constructor(props) {
     super(props);
     this.state = {
       shouldFocus: props.shouldFocus,
-      timerActive: this.activeTimer() !== false,
-      timerTime: this.timerTime()
+      timerActive: taskActiveTimer(props.task) !== false,
+      timerTime: taskTimerTime(props.task)
     };
     this.handleEnter = this.handleEnter.bind(this);
     this.timerInterval = null;
   }
 
-  activeTimer() {
-    const activeTimers = this.props.task.timers.filter(
-      timer => timer.startTime && !timer.endTime
-    );
-    if (activeTimers.length > 0) {
-      return activeTimers.slice(0, 1)[0];
-    } else {
-      return false;
-    }
-  }
-
-  timerTime(task) {
-    return this.activeTimer() === false
-      ? 0
-      : Date.now() - this.activeTimer().startTime;
-  }
-
   timerTick() {
     this.setState({
       ...this.state,
-      timerActive: this.activeTimer() !== false,
-      timerTime: this.timerTime()
+      timerActive: taskActiveTimer(this.props.task) !== false,
+      timerTime: taskTimerTime(this.props.task)
     });
-  }
-
-  formatTime(ms) {
-    const s = Math.floor(ms / 1000) % 60,
-      sec = s < 10 ? "0" + s : s,
-      m = Math.floor(ms / 1000 / 60) % 60,
-      min = m < 10 ? "0" + m : m,
-      h = Math.floor(ms / 1000 / 60 / 60);
-    return `${h}:${min}:${sec}`;
   }
 
   componentDidMount() {
@@ -75,8 +55,8 @@ class Task extends Component {
     const { task, changeTaskDetail } = this.props,
       currentTime = Date.now();
     let timers = task.timers.slice(),
-      timeElapsed = this.timerTime();
-    if (this.activeTimer() === false) {
+      timeElapsed = taskTimerTime(task);
+    if (taskActiveTimer(task) === false) {
       timers.push({ startTime: currentTime });
     } else {
       timers = timers.map(timer => {
@@ -97,7 +77,7 @@ class Task extends Component {
     const { changeTaskDetail, task } = this.props;
     const progress = task.progress === 1 ? 0 : task.progress + 0.5;
     changeTaskDetail(task.id, "progress", progress);
-    if (progress === 1 && this.activeTimer()) {
+    if (progress === 1 && taskActiveTimer(task)) {
       this.timerToggle();
     }
   }
@@ -119,12 +99,7 @@ class Task extends Component {
         this.state.timerActive ? "task--timer-active" : "task--timer-inactive"
       ],
       timerButtonText = "timer:",
-      //   timeText = this.state.timerActive
-      //     ? `${this.formatTime(task.totalTime)} + ${this.formatTime(
-      //         this.state.timerTime
-      //       )}`
-      //     : this.formatTime(task.totalTime);
-      timeText = this.formatTime(task.totalTime + this.state.timerTime);
+      timeText = formatTime(task.totalTime + this.state.timerTime);
     return (
       <div className={taskClasses.join(" ")} draggable="true">
         <button

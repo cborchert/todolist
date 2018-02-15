@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./App.scss";
 
 import Tasklist from "./components/Tasklist";
+import { orderTasks } from "./utilities/TaskOperations";
 
 class App extends Component {
   constructor(props) {
@@ -16,6 +17,8 @@ class App extends Component {
       projects: [],
       tags: [],
       taskLists: [],
+      appName: "ToDo",
+      taskListName: "TaskList",
       lastSeen
     };
 
@@ -27,15 +30,11 @@ class App extends Component {
     localStorage.setItem("lastSeen", Date.now());
   }
 
-  addTask(newTask) {
-    const order =
-      typeof newTask.order !== "undefined"
-        ? newTask.order + 1
-        : this.state.tasks.length + 1;
+  applyToTaskDefaults(newTask) {
     let task = {
       id: Date.now(),
       timeAdded: Date.now(),
-      order: order,
+      order: false,
       title: "",
       progress: 0,
       isCheckable: true,
@@ -55,14 +54,26 @@ class App extends Component {
     Object.keys(newTask).forEach(key => {
       task[key] = newTask[key];
     });
+    return task;
+  }
+
+  addTask(newTask) {
+    newTask.order =
+      typeof newTask.order !== "undefined"
+        ? newTask.order + 1
+        : this.state.tasks.length + 1;
+
+    const task = this.applyToTaskDefaults(newTask);
+
+    const tasks = orderTasks([
+      ...this.state.tasks.slice(0, newTask.order),
+      task,
+      ...this.state.tasks.slice(newTask.order)
+    ]);
 
     this.setState({
       ...this.state,
-      tasks: this.orderTasks([
-        ...this.state.tasks.slice(0, order),
-        task,
-        ...this.state.tasks.slice(order)
-      ])
+      tasks
     });
   }
 
@@ -74,30 +85,7 @@ class App extends Component {
     let tasks = [];
     let stateTaskLength = this.state.tasks.length;
     newTasks.forEach(newTask => {
-      let task = {
-        id: Date.now(),
-        timeAdded: Date.now(),
-        order: false,
-        title: "",
-        progress: 0,
-        isCheckable: true,
-        dateAdded: Date.now(),
-        totalTime: 0,
-        billableTime: 0,
-        timers: [],
-        tags: [],
-        projects: [],
-        taskLists: [],
-        timelineStart: false,
-        timelineEnd: false,
-        parentTask: false,
-        notes: []
-      };
-
-      Object.keys(newTask).forEach(key => {
-        task[key] = newTask[key];
-      });
-
+      let task = this.applyToTaskDefaults(newTask);
       tasks.push(task);
     });
 
@@ -117,16 +105,14 @@ class App extends Component {
 
     this.setState({
       ...this.state,
-      tasks: this.orderTasks(stateTasks)
+      tasks: orderTasks(stateTasks)
     });
   }
 
   removeTask(taskId) {
     this.setState({
       ...this.state,
-      tasks: this.orderTasks(
-        this.state.tasks.filter(task => task.id !== taskId)
-      )
+      tasks: orderTasks(this.state.tasks.filter(task => task.id !== taskId))
     });
   }
 
@@ -144,17 +130,6 @@ class App extends Component {
   taskTimerTime(task) {
     let activeTimer = this.taskActiveTimer(task);
     return activeTimer === false ? 0 : Date.now() - activeTimer.startTime;
-  }
-
-  taskTotalTime(task) {
-    return task.totalTime + this.taskTimerTime(task);
-  }
-
-  orderTasks(taskList) {
-    return taskList.map((task, i) => {
-      task.order = i;
-      return task;
-    });
   }
 
   changeTaskDetail(taskId, key, value) {
@@ -209,18 +184,30 @@ class App extends Component {
     clearInterval(this.cacheInterval);
   }
 
+  updateStateWithValue(key, value) {
+    this.setState({
+      ...this.state,
+      [key]: value
+    });
+  }
+
   render() {
     return (
       <div className="app">
-        <h1 className="app__title">ToDo</h1>
+        <input
+          className="app__title"
+          value={this.state.appName}
+          onChange={e => {
+            this.updateStateWithValue("appName", e.target.value);
+          }}
+        />
         <Tasklist
+          title={this.state.taskListName}
           tasks={this.state.tasks}
           addTask={this.addTask.bind(this)}
           changeTaskDetail={this.changeTaskDetail.bind(this)}
           removeTask={this.removeTask.bind(this)}
-          taskActiveTimer={this.taskActiveTimer.bind(this)}
-          taskTimerTime={this.taskActiveTimer.bind(this)}
-          taskTotalTime={this.taskTotalTime.bind(this)}
+          updateStateWithValue={this.updateStateWithValue.bind(this)}
         />
       </div>
     );

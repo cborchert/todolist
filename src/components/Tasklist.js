@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./Tasklist.scss";
 
+import { totalTasksTime, formatTime } from "../utilities/TaskOperations";
 import Task from "./Task";
 
 class Tasklist extends Component {
@@ -17,17 +18,8 @@ class Tasklist extends Component {
   timeTick() {
     this.setState({
       ...this.state,
-      totalTime: this.totalTasksTime()
+      totalTime: totalTasksTime(this.props.tasks)
     });
-  }
-
-  totalTasksTime() {
-    const { tasks, taskTotalTime } = this.props;
-    let time = 0;
-    tasks.forEach(task => {
-      time += taskTotalTime(task);
-    });
-    return time;
   }
 
   newTask(order) {
@@ -74,11 +66,26 @@ class Tasklist extends Component {
   }
 
   render() {
-    const { tasks, changeTaskDetail, removeTask } = this.props;
+    const {
+      tasks,
+      changeTaskDetail,
+      removeTask,
+      updateStateWithValue
+    } = this.props;
     return (
       <div className="tasklist">
-        <h2 className="tasklist__title">Tasklist</h2>
-        <span>{this.state.totalTime / 1000 + "s"}</span>
+        <div className="tasklist__header">
+          <input
+            className="tasklist__title"
+            value={this.props.title}
+            onChange={e => {
+              updateStateWithValue("taskListName", e.target.value);
+            }}
+          />
+          <span className="tasklist__time-tracked">
+            {formatTime(this.state.totalTime)} tracked
+          </span>
+        </div>
         <div className="tasklist__tasks">
           {tasks.map((task, i) => {
             return (
