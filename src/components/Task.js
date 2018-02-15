@@ -7,22 +7,28 @@ class Task extends Component {
     this.state = {
       shouldFocus: props.shouldFocus
     };
+    this.handleEnter = this.handleEnter.bind(this);
   }
 
-  //Todo: remove event listener on unmount
   componentDidMount() {
-    document.addEventListener("keyup", e => {
-      var key = e.which || e.keyCode;
-      //onEnter
-      if (key === 13) {
-        if (this.inputRef === document.activeElement) {
-          e.preventDefault();
-          e.stopImmediatePropagation();
-          this.props.newTask(this.props.task.order);
-          this.inputRef.blur();
-        }
+    document.addEventListener("keypress", this.handleEnter);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("keypress", this.handleEnter);
+  }
+
+  handleEnter(e) {
+    var key = e.which || e.keyCode;
+    //onEnter
+    if (key === 13) {
+      if (this.inputRef === document.activeElement) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        this.props.newTask(this.props.task.order);
+        this.inputRef.blur();
       }
-    });
+    }
   }
 
   render() {
