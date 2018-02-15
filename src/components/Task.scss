@@ -1,0 +1,118 @@
+@import "../vars";
+.task {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &__progress-button{
+        flex-shrink: 0;
+        background: transparent;
+        border-bottom-color: transparent;
+        &:hover {
+            background: $gray;
+            border-bottom-color: darken($gray, 10%);
+        }
+    }
+    &__name {
+        flex-grow: 1;
+    }
+    &__timer-button {
+        min-width: 100px;
+        text-align: center;
+    }
+    &__time {
+        box-sizing: border-box;
+        min-width: 150px;
+        text-align: center;
+        height: 2.5rem;
+        border: none;
+        background: transparent;
+        padding: 0.25rem 0.5rem;
+        position: relative;
+        overflow: hidden;
+        &:before {
+            content: " ";
+            display: block;
+            background: transparent;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-radius: 100%;
+            opacity: 0.75;
+        }
+    }
+    
+    &__remove-button {
+        background: $red;
+        border-bottom-color: $red;
+        color: white;
+        &:hover {
+            background: darken($red, 10%);
+            border-bottom-color: darken($red, 10%);
+        }
+    }
+    &--timer-active {
+        .task__time {
+            &:before {
+                animation: back-and-forth 1s infinite alternate linear, rainbow 5s infinite alternate linear;
+            }
+        }
+    }
+    &--progress-inactive {
+
+    }
+    &--progress-active {
+        .task__progress-button{
+            background: $purple;
+            border-bottom-color: $purple;
+            color: white;
+            &:hover {
+                border-bottom-color: darken($purple, 10%);
+            }
+        }
+    }
+    &--progress-complete {
+        opacity: 0.75;
+        .task__progress-button{
+            background: $green;
+            border-bottom-color: $green;
+            color: white;
+            &:hover {
+                border-bottom-color: darken($green, 10%);
+            }
+        }
+        .task__name {
+            text-decoration: line-through;
+        }
+    }
+    
+}
+
+@keyframes back-and-forth {
+    from {
+        width: 10px;
+        height: 10px;
+        bottom: -10px;
+        left: 0px;
+    }
+    to {
+        width: 10px;
+        height: 10px;
+        bottom: -10px;
+        left: calc(100% - 10px);
+    }
+}
+
+@keyframes rainbow {
+
+    0% { background: $red;}
+    20% { background: $orange;}
+    40% { background: $yellow;}
+    60% { background: $green;}
+    80% { background: $blue;}
+    100% { background: $purple;}
+    
+}

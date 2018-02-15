@@ -41,16 +41,11 @@ class Task extends Component {
 
   formatTime(ms) {
     const s = Math.floor(ms / 1000) % 60,
+      sec = s < 10 ? "0" + s : s,
       m = Math.floor(ms / 1000 / 60) % 60,
+      min = m < 10 ? "0" + m : m,
       h = Math.floor(ms / 1000 / 60 / 60);
-    let timeString = s + "s";
-    if (m !== 0) {
-      timeString = m + "m " + timeString;
-    }
-    if (h !== 0) {
-      timeString = h + "h " + timeString;
-    }
-    return timeString;
+    return `${h}:${min}:${sec}`;
   }
 
   componentDidMount() {
@@ -93,6 +88,9 @@ class Task extends Component {
     }
     changeTaskDetail(task.id, "timers", timers);
     changeTaskDetail(task.id, "totalTime", task.totalTime + timeElapsed);
+    if (task.progress === 0) {
+      changeTaskDetail(task.id, "progress", 0.5);
+    }
   }
 
   progressToggle() {
@@ -108,18 +106,35 @@ class Task extends Component {
     const { task, changeTaskDetail, setRef, removeTask } = this.props,
       progressMarker =
         task.progress <= 0 ? "[ ]" : task.progress >= 1 ? "[X]" : "[/]",
-      timerButtonText = this.state.timerActive ? "stop timer" : "start timer",
-      timeText = this.state.timerActive
-        ? `${this.formatTime(task.totalTime)} + ${this.formatTime(
-            this.state.timerTime
-          )}`
-        : this.formatTime(task.totalTime);
+      taskClasses = [
+        //base class
+        "task",
+        //progress state
+        task.progress <= 0
+          ? "task--progress-inactive"
+          : task.progress >= 1
+            ? "task--progress-complete"
+            : "task--progress-active",
+        //timer state
+        this.state.timerActive ? "task--timer-active" : "task--timer-inactive"
+      ],
+      timerButtonText = "timer:",
+      //   timeText = this.state.timerActive
+      //     ? `${this.formatTime(task.totalTime)} + ${this.formatTime(
+      //         this.state.timerTime
+      //       )}`
+      //     : this.formatTime(task.totalTime);
+      timeText = this.formatTime(task.totalTime + this.state.timerTime);
     return (
-      <div>
-        <button onClick={this.progressToggle.bind(this)}>
+      <div className={taskClasses.join(" ")}>
+        <button
+          className="task__progress-button"
+          onClick={this.progressToggle.bind(this)}
+        >
           {progressMarker}
         </button>
         <input
+          className="task__name"
           value={task.title}
           onChange={e => {
             changeTaskDetail(task.id, "title", e.target.value);
@@ -129,15 +144,21 @@ class Task extends Component {
             setRef(input, task.id);
           }}
         />
+
         <button
+          className="task__timer-button"
+          onClick={this.timerToggle.bind(this)}
+        >
+          <span className="task__time">{timeText}</span>
+        </button>
+        <button
+          className="task__remove-button"
           onClick={e => {
             removeTask(task.id);
           }}
         >
           x
         </button>
-        <button onClick={this.timerToggle.bind(this)}>{timerButtonText}</button>
-        <span>{timeText}</span>
       </div>
     );
   }

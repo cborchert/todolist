@@ -50,21 +50,28 @@ class Tasklist extends Component {
   render() {
     const { tasks, changeTaskDetail, removeTask } = this.props;
     return (
-      <div>
-        <h2>Tasklist</h2>
-        {tasks.map((task, i) => {
-          return (
-            <Task
-              key={i}
-              task={task}
-              changeTaskDetail={changeTaskDetail}
-              newTask={this.newTask.bind(this)}
-              setRef={this.setRef.bind(this)}
-              removeTask={removeTask}
-            />
-          );
-        })}
-        <button onClick={this.addTaskButton.bind(this)}>Add Task</button>
+      <div className="tasklist">
+        <h2 className="tasklist__title">Tasklist</h2>
+        <div className="tasklist__tasks">
+          {tasks.map((task, i) => {
+            return (
+              <Task
+                key={i}
+                task={task}
+                changeTaskDetail={changeTaskDetail}
+                newTask={this.newTask.bind(this)}
+                setRef={this.setRef.bind(this)}
+                removeTask={removeTask}
+              />
+            );
+          })}
+        </div>
+        <button
+          className="tasklist__add-task-button"
+          onClick={this.addTaskButton.bind(this)}
+        >
+          Add Task
+        </button>
       </div>
     );
   }

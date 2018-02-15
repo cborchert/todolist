@@ -91,8 +91,8 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <h1>ToDo</h1>
+      <div className="app">
+        <h1 className="app__title">ToDo</h1>
         <Tasklist
           tasks={this.state.tasks}
           addTask={this.addTask.bind(this)}
