@@ -88,7 +88,7 @@ class Task extends Component {
     }
     changeTaskDetail(task.id, "timers", timers);
     changeTaskDetail(task.id, "totalTime", task.totalTime + timeElapsed);
-    if (task.progress === 0) {
+    if (task.progress === 0 || task.progress === 1) {
       changeTaskDetail(task.id, "progress", 0.5);
     }
   }
