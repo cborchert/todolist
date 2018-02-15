@@ -16,7 +16,6 @@ class App extends Component {
   }
 
   addTask(newTask) {
-    //TODO: Set defaults
     const order =
       typeof newTask.order !== "undefined"
         ? newTask.order + 1
@@ -73,6 +72,7 @@ class App extends Component {
   }
 
   changeTaskDetail(taskId, key, value) {
+    console.log(taskId, key, value);
     this.setState({
       ...this.state,
       tasks: this.state.tasks.map((task, i) => {
