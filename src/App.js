@@ -32,7 +32,7 @@ class App extends Component {
       dateAdded: newTask.dateAdded,
       totalTime: newTask.totalTime,
       billableTime: newTask.billableTime,
-      timerStart: newTask.timerStart,
+      timers: [],
       tags: newTask.tags,
       projects: newTask.projects,
       taskLists: newTask.taskLists,
@@ -44,14 +44,27 @@ class App extends Component {
 
     this.setState({
       ...this.state,
-      tasks: [
+      tasks: this.orderTasks([
         ...this.state.tasks.slice(0, order),
         task,
         ...this.state.tasks.slice(order)
-      ].map((task, i) => {
-        task.order = i;
-        return task;
-      })
+      ])
+    });
+  }
+
+  removeTask(taskId) {
+    this.setState({
+      ...this.state,
+      tasks: this.orderTasks(
+        this.state.tasks.filter(task => task.id !== taskId)
+      )
+    });
+  }
+
+  orderTasks(taskList) {
+    return taskList.map((task, i) => {
+      task.order = i;
+      return task;
     });
   }
 
@@ -80,6 +93,7 @@ class App extends Component {
           tasks={this.state.tasks}
           addTask={this.addTask.bind(this)}
           changeTaskDetail={this.changeTaskDetail.bind(this)}
+          removeTask={this.removeTask.bind(this)}
         />
       </div>
     );

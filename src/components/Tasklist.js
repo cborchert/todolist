@@ -48,7 +48,7 @@ class Tasklist extends Component {
   }
 
   render() {
-    const { tasks, changeTaskDetail } = this.props;
+    const { tasks, changeTaskDetail, removeTask } = this.props;
     return (
       <div>
         <h2>Tasklist</h2>
@@ -60,6 +60,7 @@ class Tasklist extends Component {
               changeTaskDetail={changeTaskDetail}
               newTask={this.newTask.bind(this)}
               setRef={this.setRef.bind(this)}
+              removeTask={removeTask}
             />
           );
         })}

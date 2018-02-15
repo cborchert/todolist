@@ -32,7 +32,7 @@ class Task extends Component {
   }
 
   render() {
-    const { task, changeTaskDetail, setRef } = this.props;
+    const { task, changeTaskDetail, setRef, removeTask } = this.props;
     return (
       <div>
         <input
@@ -45,6 +45,13 @@ class Task extends Component {
             setRef(input, task.id);
           }}
         />
+        <button
+          onClick={e => {
+            removeTask(task.id);
+          }}
+        >
+          x
+        </button>
       </div>
     );
   }
