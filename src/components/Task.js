@@ -32,9 +32,22 @@ class Task extends Component {
   }
 
   render() {
-    const { task, changeTaskDetail, setRef, removeTask } = this.props;
+    const { task, changeTaskDetail, setRef, removeTask } = this.props,
+      progressMarker =
+        task.progress <= 0 ? "[ ]" : task.progress >= 1 ? "[X]" : "[/]";
     return (
       <div>
+        <button
+          onClick={e => {
+            changeTaskDetail(
+              task.id,
+              "progress",
+              task.progress === 1 ? 0 : task.progress + 0.5
+            );
+          }}
+        >
+          {progressMarker}
+        </button>
         <input
           value={task.title}
           onChange={e => {
@@ -52,6 +65,7 @@ class Task extends Component {
         >
           x
         </button>
+        <span />
       </div>
     );
   }

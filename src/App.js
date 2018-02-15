@@ -22,25 +22,29 @@ class App extends Component {
         ? newTask.order + 1
         : this.state.tasks.length;
 
-    const task = {
+    let task = {
       id: Date.now(),
       timeAdded: Date.now(),
       order: order,
-      title: newTask.title,
-      progress: newTask.progress,
-      isCheckable: newTask.isCheckable,
-      dateAdded: newTask.dateAdded,
-      totalTime: newTask.totalTime,
-      billableTime: newTask.billableTime,
+      title: "",
+      progress: 0,
+      isCheckable: true,
+      dateAdded: Date.now(),
+      totalTime: 0,
+      billableTime: 0,
       timers: [],
-      tags: newTask.tags,
-      projects: newTask.projects,
-      taskLists: newTask.taskLists,
-      timelineStart: newTask.timelineStart,
-      timelineEnd: newTask.timelineEnd,
-      subTasks: newTask.subTasks,
-      notes: newTask.notes
+      tags: [],
+      projects: [],
+      taskLists: [],
+      timelineStart: false,
+      timelineEnd: false,
+      parentTask: false,
+      notes: []
     };
+
+    Object.keys(newTask).forEach(key => {
+      task[key] = newTask[key];
+    });
 
     this.setState({
       ...this.state,
