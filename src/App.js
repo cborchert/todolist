@@ -12,13 +12,15 @@ class App extends Component {
     localStorage.clear();
     const localTasks = localStorage.getItem("tasks");
     const lastSeen = localStorage.getItem("lastSeen");
+    const taskListName = localStorage.getItem("taskListName");
+    const appName = localStorage.getItem("appName");
     this.state = {
       tasks: localTasks ? JSON.parse(localTasks) : [],
       projects: [],
       tags: [],
       taskLists: [],
-      appName: "ToDo",
-      taskListName: "TaskList",
+      appName,
+      taskListName,
       lastSeen
     };
 
@@ -28,6 +30,8 @@ class App extends Component {
   cacheLocally() {
     localStorage.setItem("tasks", JSON.stringify(this.state.tasks));
     localStorage.setItem("lastSeen", Date.now());
+    localStorage.setItem("taskListName", this.state.taskListName);
+    localStorage.setItem("appName", this.state.appName);
   }
 
   applyToTaskDefaults(newTask) {
@@ -232,6 +236,19 @@ class App extends Component {
           updateStateWithValue={this.updateStateWithValue.bind(this)}
           reorderTask={this.reorderTask.bind(this)}
         />
+        <div>
+          <h5>shortcuts</h5>
+          <ul>
+            <li>up / down keys: navigate between tasks</li>
+            <li>enter: new task after this task</li>
+            <li>shift + enter: new task before this task</li>
+            <li>shift + delete/backspace: delete task</li>
+            <li>shift + right: indent task</li>
+            <li>shift + left: unindent task</li>
+            <li>shift + up: move task up list</li>
+            <li>shift + down: move task down list</li>
+          </ul>
+        </div>
       </div>
     );
   }
