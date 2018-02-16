@@ -249,7 +249,10 @@ class App extends Component {
               <b>shift + enter</b>: new task before this task
             </li>
             <li>
-              <b>shift + delete</b> or <b>backspace</b>: delete task
+              <b>shift + delete/backspace</b>: delete task
+            </li>
+            <li>
+              <b>delete/backspace</b> on empty task: delete task
             </li>
             <li>
               <b>shift + right</b> or <b>tab</b>: indent task

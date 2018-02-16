@@ -54,6 +54,15 @@ class Task extends Component {
       //Shift key events
       if (!isShift) {
         switch (key) {
+          case 8:
+            //delete
+            if (task.title === "") {
+              e.preventDefault();
+              e.stopImmediatePropagation();
+              setFocus(task.order - 1);
+              removeTask(task.order);
+            }
+            break;
           case 13:
             //enter
             e.preventDefault();
