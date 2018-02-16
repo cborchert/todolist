@@ -48,7 +48,7 @@ class Task extends Component {
         task,
         removeTask,
         reorderTask,
-        setFocusById
+        changeTaskDetail
       } = this.props;
       const isShift = !!window.event.shiftKey;
       //Shift key events
@@ -106,6 +106,9 @@ class Task extends Component {
           case 37:
             //shift + left
             //unchild from parent
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            changeTaskDetail(task.id, "isChild", false);
             //do nothing
             break;
           case 38:
@@ -120,6 +123,9 @@ class Task extends Component {
             //shift + right
             //do nothing
             //child to parent element
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            changeTaskDetail(task.id, "isChild", true);
             break;
           case 40:
             //shift + down
@@ -185,7 +191,8 @@ class Task extends Component {
         this.state.timerActive ? "task--timer-active" : "task--timer-inactive",
         this.inputRef === document.activeElement
           ? "task--input-active"
-          : "task--input-inactive"
+          : "task--input-inactive",
+        task.isChild ? "task--is-child" : ""
       ],
       timeText = formatTime(task.totalTime + this.state.timerTime);
     return (

@@ -4,7 +4,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-sizing: border-box;
 
+    &--is-child {
+        padding-left: 20px;
+        &:before{
+            content: "-";
+            padding-right: 15px;
+        }
+    }
     &__progress-button{
         background: transparent;
         border-bottom-color: transparent;
