@@ -19,8 +19,8 @@ class App extends Component {
       projects: [],
       tags: [],
       taskLists: [],
-      appName,
-      taskListName,
+      appName: appName ? appName : "to do (click to edit)",
+      taskListName: taskListName ? taskListName : "all tasks (click to edit)",
       lastSeen
     };
 
@@ -236,8 +236,8 @@ class App extends Component {
           updateStateWithValue={this.updateStateWithValue.bind(this)}
           reorderTask={this.reorderTask.bind(this)}
         />
-        <div>
-          <h5>shortcuts</h5>
+        <div className="app__help">
+          <h5 className="app__help-title">shortcuts</h5>
           <ul>
             <li>up / down keys: navigate between tasks</li>
             <li>enter: new task after this task</li>
