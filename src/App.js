@@ -239,14 +239,30 @@ class App extends Component {
         <div className="app__help">
           <h5 className="app__help-title">shortcuts</h5>
           <ul>
-            <li>up / down keys: navigate between tasks</li>
-            <li>enter: new task after this task</li>
-            <li>shift + enter: new task before this task</li>
-            <li>shift + delete/backspace: delete task</li>
-            <li>shift + right: indent task</li>
-            <li>shift + left: unindent task</li>
-            <li>shift + up: move task up list</li>
-            <li>shift + down: move task down list</li>
+            <li>
+              <b>up</b> / <b>down</b> keys: navigate between tasks
+            </li>
+            <li>
+              <b>enter</b>: new task after this task
+            </li>
+            <li>
+              <b>shift + enter</b>: new task before this task
+            </li>
+            <li>
+              <b>shift + delete</b> or <b>backspace</b>: delete task
+            </li>
+            <li>
+              <b>shift + right</b> or <b>tab</b>: indent task
+            </li>
+            <li>
+              <b>shift + left</b> or <b>shift + tab</b>: unindent task
+            </li>
+            <li>
+              <b>shift + up</b>: move task up list
+            </li>
+            <li>
+              <b>shift + down</b>: move task down list
+            </li>
           </ul>
         </div>
       </div>

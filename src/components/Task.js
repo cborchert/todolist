@@ -82,6 +82,13 @@ class Task extends Component {
             setFocus(task.order + 1);
             break;
 
+          case 9:
+            //tab
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            changeTaskDetail(task.id, "isChild", true);
+            break;
+
           default:
             //do nothing
             break;
@@ -134,6 +141,12 @@ class Task extends Component {
             reorderTask(task.order, task.order + 1);
             setFocus(task.order);
             //reorder down
+            break;
+          case 9:
+            //shift+tab
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            changeTaskDetail(task.id, "isChild", false);
             break;
           default:
             //do nothing
