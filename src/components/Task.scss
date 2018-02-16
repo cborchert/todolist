@@ -17,7 +17,50 @@
     }
     &__name {
         flex-grow: 1;
+        position: relative;
+        &__input {
+            // position: absolute;
+            // z-index: 1000;
+            width: 100%;
+            // display: block;
+            // opacity: 0;
+            // top: 0;
+            // left: 0;
+            box-sizing: border-box;
+            // height: 2.5rem;
+            // border: none;
+            // border-bottom: 4px solid transparent;
+            // background: transparent;
+            padding: 0.25rem 0.5rem calc(0.25rem - 4px) 0.5rem;
+            // margin: 0;
+            // border-radius: 0;
+            // outline: none;
+            // line-height: 2rem;
+            // letter-spacing: 1px;
+        }
+        &__rendered {
+            display: none;
+            // display: block;
+            // z-index: 500;
+            // width: 100%;
+            // opacity: 1;
+            // top: 0;
+            // left: 0;
+            // box-sizing: border-box;
+            // height: 2.5rem;
+            // border: none;
+            // border-bottom: 4px solid transparent;
+            // background: transparent;
+            // padding: 0.25rem 0.5rem calc(0.25rem - 4px) 0.5rem;
+            // margin: 0;
+            // border-radius: 0;
+            // outline: none;
+            // line-height: 2rem;
+            // letter-spacing: 1px;
+        }
+
     }
+
     &__timer-button {
         width: 150px;
         box-sizing: border-box;
@@ -40,7 +83,7 @@
             display: block;
             background: transparent;
             position: absolute;
-            bottom: -3px;
+            bottom: 0;
             left: 0;
             width: 0;
             height: 0;
@@ -97,6 +140,15 @@
     }
     
 }
+
+// .task .task__name:hover, .task.task--input-active .task__name {
+//     .task__name__input {
+//         opacity: 1;
+//     }
+//     .task__name__rendered {
+//         opacity: 0;
+//     }
+// }
 
 @keyframes back-and-forth {
     from {

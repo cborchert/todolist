@@ -24,9 +24,13 @@ class Tasklist extends Component {
 
   newTask(order) {
     this.props.addTask({ title: "", order });
+    this.setFocus(order + 1);
+  }
+
+  setFocus(order) {
     this.setState({
       ...this.state,
-      focusOnTask: order + 1
+      focusOnTask: order
     });
   }
 
@@ -52,8 +56,15 @@ class Tasklist extends Component {
   componentDidUpdate() {
     const focusOrder = this.state.focusOnTask;
     if (focusOrder !== false) {
-      const focusId = this.props.tasks[focusOrder].id,
-        focusTaskRef = this.taskRefs.filter(taskRef => taskRef.id === focusId);
+      //This assumes that
+      const focusTask = this.props.tasks[focusOrder];
+      if (typeof focusTask === "undefined") {
+        return;
+      }
+      const focusId = focusTask.id;
+      const focusTaskRef = this.taskRefs.filter(
+        taskRef => taskRef.id === focusId
+      );
 
       if (focusTaskRef.length > 0) {
         focusTaskRef[0].ref.focus();
@@ -94,6 +105,7 @@ class Tasklist extends Component {
                 task={task}
                 changeTaskDetail={changeTaskDetail}
                 newTask={this.newTask.bind(this)}
+                setFocus={this.setFocus.bind(this)}
                 setRef={this.setRef.bind(this)}
                 removeTask={removeTask}
               />

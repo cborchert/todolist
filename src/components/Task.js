@@ -16,7 +16,7 @@ class Task extends Component {
       timerActive: taskActiveTimer(props.task) !== false,
       timerTime: taskTimerTime(props.task)
     };
-    this.handleEnter = this.handleEnter.bind(this);
+    this.handleKeypress = this.handleKeypress.bind(this);
     this.timerInterval = null;
   }
 
@@ -29,24 +29,52 @@ class Task extends Component {
   }
 
   componentDidMount() {
-    document.addEventListener("keypress", this.handleEnter);
+    document.addEventListener("keydown", this.handleKeypress);
     this.timerInterval = setInterval(this.timerTick.bind(this), 100);
   }
 
   componentWillUnmount() {
-    document.removeEventListener("keypress", this.handleEnter);
+    document.removeEventListener("keydown", this.handleKeypress);
     clearInterval(this.timerInterval);
   }
 
-  handleEnter(e) {
+  handleKeypress(e) {
     var key = e.which || e.keyCode;
-    //onEnter
-    if (key === 13) {
-      if (this.inputRef === document.activeElement) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        this.props.newTask(this.props.task.order);
-        this.inputRef.blur();
+
+    if (this.inputRef === document.activeElement) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      const { newTask, setFocus, task } = this.props;
+      const isShift = !!window.event.shiftKey;
+      console.log(key, isShift);
+      if (!isShift) {
+        switch (key) {
+          case 13:
+            //enter
+            newTask(task.order);
+            this.inputRef.blur();
+            break;
+          case 37:
+            //left
+            //do nothing
+            break;
+          case 38:
+            //up
+            setFocus(task.order - 1);
+            break;
+          case 39:
+            //right
+            //do nothing
+            break;
+          case 40:
+            //down
+            setFocus(task.order + 1);
+            break;
+
+          default:
+            //do nothing
+            break;
+        }
       }
     }
   }
@@ -96,9 +124,11 @@ class Task extends Component {
             ? "task--progress-complete"
             : "task--progress-active",
         //timer state
-        this.state.timerActive ? "task--timer-active" : "task--timer-inactive"
+        this.state.timerActive ? "task--timer-active" : "task--timer-inactive",
+        this.inputRef === document.activeElement
+          ? "task--input-active"
+          : "task--input-inactive"
       ],
-      timerButtonText = "timer:",
       timeText = formatTime(task.totalTime + this.state.timerTime);
     return (
       <div className={taskClasses.join(" ")} draggable="true">
@@ -108,17 +138,20 @@ class Task extends Component {
         >
           {progressMarker}
         </button>
-        <input
-          className="task__name"
-          value={task.title}
-          onChange={e => {
-            changeTaskDetail(task.id, "title", e.target.value);
-          }}
-          ref={input => {
-            this.inputRef = input;
-            setRef(input, task.id);
-          }}
-        />
+        <div className="task__name">
+          <input
+            className="task__name__input"
+            value={task.title}
+            onChange={e => {
+              changeTaskDetail(task.id, "title", e.target.value);
+            }}
+            ref={input => {
+              this.inputRef = input;
+              setRef(input, task.id);
+            }}
+          />
+          <div className="task__name__rendered">{task.title}</div>
+        </div>
 
         <button
           className="task__timer-button"

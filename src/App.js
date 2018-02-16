@@ -168,7 +168,7 @@ class App extends Component {
         },
         {
           id: 5,
-          title: "save your progress by clicking the checkbox to the left"
+          title: "mark your progress by clicking the checkbox to the left"
         },
         {
           id: 6,
