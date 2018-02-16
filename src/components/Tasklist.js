@@ -34,15 +34,45 @@ class Tasklist extends Component {
     });
   }
 
+  setFocusById(taskId) {
+    const task = this.props.tasks.filter(t => t.id === taskId)[0];
+    if (!task) {
+      return;
+    }
+    this.setFocus(task.order);
+  }
+
   addTaskButton(event) {
     const order = this.props.tasks.length - 1;
     this.newTask(order);
   }
 
   setRef(ref, id) {
-    if (this.taskRefs.filter(taskRef => taskRef.id === id).length === 0) {
-      this.taskRefs = [...this.taskRefs, { ref, id }];
+    //Get rid of old ref if it exists
+    this.taskRefs = this.taskRefs.filter(taskRef => taskRef.id !== id);
+    this.taskRefs = [...this.taskRefs, { ref, id }];
+  }
+
+  removeTask(order) {
+    const task = this.props.tasks[order];
+    if (typeof task === "undefined") {
+      return;
     }
+    this.props.removeTask(task.id);
+  }
+
+  reorderTask(order, newOrder) {
+    if (newOrder < 0) {
+      newOrder = this.props.tasks.length - 1;
+    }
+    if (newOrder >= this.props.tasks.length) {
+      newOrder = 0;
+    }
+    const task = this.props.tasks[order];
+    if (typeof task === "undefined") {
+      return;
+    }
+    this.props.reorderTask(task.id, newOrder);
   }
 
   componentDidMount() {
@@ -59,6 +89,10 @@ class Tasklist extends Component {
       //This assumes that
       const focusTask = this.props.tasks[focusOrder];
       if (typeof focusTask === "undefined") {
+        this.setState({
+          ...this.state,
+          focusOnTask: false
+        });
         return;
       }
       const focusId = focusTask.id;
@@ -68,21 +102,16 @@ class Tasklist extends Component {
 
       if (focusTaskRef.length > 0) {
         focusTaskRef[0].ref.focus();
-        this.setState({
-          ...this.state,
-          focusOnTask: false
-        });
       }
+      this.setState({
+        ...this.state,
+        focusOnTask: false
+      });
     }
   }
 
   render() {
-    const {
-      tasks,
-      changeTaskDetail,
-      removeTask,
-      updateStateWithValue
-    } = this.props;
+    const { tasks, changeTaskDetail, updateStateWithValue } = this.props;
     return (
       <div className="tasklist">
         <div className="tasklist__header">
@@ -106,8 +135,10 @@ class Tasklist extends Component {
                 changeTaskDetail={changeTaskDetail}
                 newTask={this.newTask.bind(this)}
                 setFocus={this.setFocus.bind(this)}
+                setFocusById={this.setFocusById.bind(this)}
                 setRef={this.setRef.bind(this)}
-                removeTask={removeTask}
+                removeTask={this.removeTask.bind(this)}
+                reorderTask={this.reorderTask.bind(this)}
               />
             );
           })}

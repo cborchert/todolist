@@ -9,7 +9,7 @@ class App extends Component {
     super(props);
 
     //Debugging :)
-    //localStorage.clear();
+    localStorage.clear();
     const localTasks = localStorage.getItem("tasks");
     const lastSeen = localStorage.getItem("lastSeen");
     this.state = {
@@ -116,6 +116,29 @@ class App extends Component {
     });
   }
 
+  reorderTask(taskId, newOrder) {
+    const task = this.state.tasks.slice().filter(t => t.id === taskId)[0];
+    if (typeof task === "undefined") {
+      return;
+    }
+
+    const tasksWithoutTask = [
+      ...this.state.tasks.slice(0, task.order),
+      ...this.state.tasks.slice(task.order + 1)
+    ];
+
+    const tasks = orderTasks([
+      ...tasksWithoutTask.slice(0, newOrder),
+      task,
+      ...tasksWithoutTask.slice(newOrder)
+    ]);
+
+    this.setState({
+      ...this.state,
+      tasks
+    });
+  }
+
   taskActiveTimer(task) {
     const activeTimers = task.timers.filter(
       timer => timer.startTime && !timer.endTime
@@ -133,7 +156,6 @@ class App extends Component {
   }
 
   changeTaskDetail(taskId, key, value) {
-    console.log(taskId, key, value);
     this.setState({
       ...this.state,
       tasks: this.state.tasks.map((task, i) => {
@@ -208,6 +230,7 @@ class App extends Component {
           changeTaskDetail={this.changeTaskDetail.bind(this)}
           removeTask={this.removeTask.bind(this)}
           updateStateWithValue={this.updateStateWithValue.bind(this)}
+          reorderTask={this.reorderTask.bind(this)}
         />
       </div>
     );

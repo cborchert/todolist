@@ -42,17 +42,24 @@ class Task extends Component {
     var key = e.which || e.keyCode;
 
     if (this.inputRef === document.activeElement) {
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      const { newTask, setFocus, task } = this.props;
+      const {
+        newTask,
+        setFocus,
+        task,
+        removeTask,
+        reorderTask,
+        setFocusById
+      } = this.props;
       const isShift = !!window.event.shiftKey;
-      console.log(key, isShift);
+      //Shift key events
       if (!isShift) {
         switch (key) {
           case 13:
             //enter
+            e.preventDefault();
+            e.stopImmediatePropagation();
             newTask(task.order);
-            this.inputRef.blur();
+
             break;
           case 37:
             //left
@@ -60,6 +67,8 @@ class Task extends Component {
             break;
           case 38:
             //up
+            e.preventDefault();
+            e.stopImmediatePropagation();
             setFocus(task.order - 1);
             break;
           case 39:
@@ -68,9 +77,58 @@ class Task extends Component {
             break;
           case 40:
             //down
+            e.preventDefault();
+            e.stopImmediatePropagation();
             setFocus(task.order + 1);
             break;
 
+          default:
+            //do nothing
+            break;
+        }
+      }
+      //Shift + Keyevents
+      if (isShift) {
+        switch (key) {
+          case 13:
+            //shift + enter
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            newTask(task.order - 1);
+            break;
+          case 8:
+            //shift + delete
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            setFocus(task.order - 1);
+            removeTask(task.order);
+            break;
+          case 37:
+            //shift + left
+            //unchild from parent
+            //do nothing
+            break;
+          case 38:
+            //shift + up
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            reorderTask(task.order, task.order - 1);
+            setFocus(task.order);
+            //reorder up
+            break;
+          case 39:
+            //shift + right
+            //do nothing
+            //child to parent element
+            break;
+          case 40:
+            //shift + down
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            reorderTask(task.order, task.order + 1);
+            setFocus(task.order);
+            //reorder down
+            break;
           default:
             //do nothing
             break;
