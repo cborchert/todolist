@@ -230,7 +230,7 @@ class Task extends Component {
         <button
           className="task__remove-button"
           onClick={e => {
-            removeTask(task.id);
+            removeTask(task.order);
           }}
         >
           x
