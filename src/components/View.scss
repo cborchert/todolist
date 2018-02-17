@@ -1,0 +1,32 @@
+@import "../vars.scss";
+.view {
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 20px;
+
+    &__header {
+        margin-bottom: 15px;
+        border-bottom: 2px solid $gray;
+        font-size: 1.25rem;
+        
+    }
+    &__title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: $black;
+        width: calc(100% - 170px);
+    }
+    &__tasks {
+        padding: 0 5px 20px ;
+    }
+    &__add-task-button {
+
+    }
+    &__time-tracked {
+        float: right;
+        font-style: italic;
+        font-weight: normal;
+        line-height: 3rem;
+        padding-right: 10px;
+    }
+}

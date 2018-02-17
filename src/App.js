@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./App.scss";
 
 import Tasklist from "./components/Tasklist";
+import View from "./components/View";
 import { orderTasks } from "./utilities/TaskOperations";
 
 class App extends Component {
@@ -24,7 +25,7 @@ class App extends Component {
             {
               title: "all tasks",
               tag: "",
-              filter: "",
+              filterString: "",
               tasks: [],
               permanent: true
             }
@@ -188,29 +189,30 @@ class App extends Component {
       this.addTasks([
         {
           id: 1,
-          title: "hello, world!"
+          title: "hello, world! #ab"
         },
         {
           id: 2,
-          title: "click this text and hit enter to add a task beneath it"
+          title: "#cd click this text and hit enter to add a task beneath it"
         },
         {
           id: 3,
-          title: "click the x to the right to delete this task"
+          title: "#ef click the x to the right to delete this task"
         },
         {
           id: 4,
           title:
-            "toggle this task's timer by clicking the time button to the right"
+            "#cd #ef toggle this task's timer by clicking the time button to the right"
         },
         {
           id: 5,
-          title: "mark your progress by clicking the checkbox to the left"
+          title:
+            "#ab #cd#ef mark your progress by clicking the checkbox to the left"
         },
         {
           id: 6,
           title:
-            "this app currently runs on local storage, so you can come back later :)"
+            "#ab #cd this app currently runs on local storage, so you can come back later :)"
         }
       ]);
     }
@@ -228,7 +230,57 @@ class App extends Component {
     });
   }
 
+  applyTagFilter(tasks, filterString) {
+    //if no filter is to be applied, it gets all tasks
+    if (!filterString) {
+      return tasks;
+    }
+    let filters = [];
+    //Look for any #tags separated by space. Allows for #abc#def to be counted as one tag
+    const regex = /[#][^\s]+/g;
+    let match;
+    while ((match = regex.exec(filterString))) {
+      let filter = match[0];
+      //Parse tags like #tag1#tag2 into #tag1 #tag2
+      const regex2 = /[#][^\s^#]+/g;
+      let filterParts = [];
+      let match2;
+      while ((match2 = regex2.exec(filter))) {
+        filterParts.push(match2[0]);
+      }
+      filters.push(filterParts);
+    }
+    //TODO Clean this up
+    const filteredTasks = tasks.filter(task => {
+      let includeTask = false;
+      filters.forEach(filterPart => {
+        let matchesFilter = true;
+        //Must match each filter part
+        filterPart.forEach(filter => {
+          let strPos = task.title.indexOf(filter);
+          if (strPos >= 0) {
+            let char = task.title[strPos + filter.length];
+            //Make sure that it's the end of the filter application
+            //if the next character isn't the end of the string, a space, or another hashtag, it doesn't work
+            if (typeof char === "undefined" || char === " " || char === "#") {
+              matchesFilter = matchesFilter && true;
+            }
+          } else {
+            //no match
+            matchesFilter = false;
+          }
+        });
+        if (matchesFilter) {
+          includeTask = true;
+        }
+      });
+      return includeTask;
+    });
+    return filteredTasks;
+  }
+
   render() {
+    const { views, tasks } = this.state;
     return (
       <div className="app">
         <input
@@ -238,15 +290,14 @@ class App extends Component {
             this.updateStateWithValue("appName", e.target.value);
           }}
         />
-        <Tasklist
-          title={this.state.taskListName}
-          tasks={this.state.tasks}
-          addTask={this.addTask.bind(this)}
-          changeTaskDetail={this.changeTaskDetail.bind(this)}
-          removeTask={this.removeTask.bind(this)}
-          updateStateWithValue={this.updateStateWithValue.bind(this)}
-          reorderTask={this.reorderTask.bind(this)}
-        />
+        {views.map(view => {
+          return (
+            <View
+              view={view}
+              tasks={this.applyTagFilter(tasks, view.filterString)}
+            />
+          );
+        })}
         <div className="app__help">
           <h5 className="app__help-title">shortcuts</h5>
           <ul>
