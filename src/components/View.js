@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import findIndex from "lodash/findIndex";
 import "./View.scss";
 
 import {
@@ -66,16 +65,6 @@ class View extends Component {
     let focusId = tasks[newIndex];
     this.setState({
       focusOnTask: focusId
-    });
-  }
-
-  setFocusByOrder(order) {
-    if (order < 0 || order >= this.taskRefs.length) {
-      return;
-    }
-    let id = this.taskRefs[order].id;
-    this.setState({
-      focusOnTask: id
     });
   }
 

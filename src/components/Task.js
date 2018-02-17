@@ -53,7 +53,6 @@ class Task extends Component {
         order,
         task,
         removeTask,
-        setFocusByOrder,
         setFocusWithDirection,
         reorderTask
       } = this.props;
