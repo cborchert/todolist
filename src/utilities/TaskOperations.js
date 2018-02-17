@@ -1,4 +1,7 @@
 function taskActiveTimer(task) {
+  if (!task || !task.timers) {
+    return false;
+  }
   const activeTimers = task.timers.filter(
     timer => timer.startTime && !timer.endTime
   );

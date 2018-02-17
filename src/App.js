@@ -89,10 +89,13 @@ class App extends Component {
       ...this.state.tasks.slice(newTask.order)
     ]);
 
-    this.setState({
-      ...this.state,
-      tasks
-    });
+    this.setState(
+      {
+        ...this.state,
+        tasks
+      },
+      this.reconcileViews
+    );
   }
 
   addTasks(newTasks) {
@@ -121,17 +124,23 @@ class App extends Component {
       ];
     });
 
-    this.setState({
-      ...this.state,
-      tasks: orderTasks(stateTasks)
-    });
+    this.setState(
+      {
+        ...this.state,
+        tasks: orderTasks(stateTasks)
+      },
+      this.reconcileViews
+    );
   }
 
   removeTask(taskId) {
-    this.setState({
-      ...this.state,
-      tasks: orderTasks(this.state.tasks.filter(task => task.id !== taskId))
-    });
+    this.setState(
+      {
+        ...this.state,
+        tasks: this.state.tasks.filter(task => task.id !== taskId)
+      },
+      this.reconcileViews
+    );
   }
 
   reorderTask(taskId, newOrder) {
@@ -232,13 +241,23 @@ class App extends Component {
     });
   }
 
-  updateView(viewId, key, value) {
+  updateView(viewId, viewValues) {
     const { views } = this.state;
     const index = findIndex(views, v => v.id === viewId);
-    const view = { ...views[index], [key]: value };
+    const view = { ...views[index], ...viewValues };
     this.setState({
       ...this.state,
       views: [...views.slice(0, index), view, ...views.slice(index + 1)]
+    });
+  }
+
+  updateTask(taskId, taskValues) {
+    const { tasks } = this.state;
+    const index = findIndex(tasks, t => t.id === taskId);
+    const task = { ...tasks[index], ...taskValues };
+    this.setState({
+      ...this.state,
+      tasks: [...tasks.slice(0, index), task, ...tasks.slice(index + 1)]
     });
   }
 
@@ -291,6 +310,50 @@ class App extends Component {
     return filteredTasks;
   }
 
+  reconcileViews() {
+    this.state.views.forEach(view => {
+      this.reconcileViewTasks(view);
+    });
+  }
+
+  reconcileViewTasks(view) {
+    //start with the task ids included
+    let viewTasks = view.tasks;
+    //then add any tasks that happen to fit the filter
+    let filteredTasks = this.applyTagFilter(
+      this.state.tasks,
+      view.filterString
+    );
+
+    //Remove any tasks that are already there.
+    let tasks = [
+      ...viewTasks,
+      ...filteredTasks
+        .filter(task => viewTasks.indexOf(task.id) === -1)
+        .map(task => task.id)
+    ];
+    view = {
+      ...view,
+      tasks
+    };
+
+    this.setState({
+      views: [...this.state.views.filter(v => v.id !== view.id), view]
+    });
+  }
+
+  getViewTasks(view) {
+    let tasks = [];
+    let viewTasks = [...view.tasks];
+    viewTasks.forEach(taskId => {
+      let matchedTasks = this.state.tasks.filter(t => t.id === taskId);
+      if (matchedTasks.length > 0) {
+        tasks.push(matchedTasks[0]);
+      }
+    });
+    return tasks;
+  }
+
   render() {
     const { views, tasks } = this.state;
     return (
@@ -302,12 +365,16 @@ class App extends Component {
             this.updateStateWithValue("appName", e.target.value);
           }}
         />
-        {views.map(view => {
+        {views.map((view, i) => {
           return (
             <View
+              key={"view-" + i}
               view={view}
-              tasks={this.applyTagFilter(tasks, view.filterString)}
+              tasks={this.getViewTasks(view)}
               updateView={this.updateView.bind(this)}
+              removeTask={this.removeTask.bind(this)}
+              updateTask={this.updateTask.bind(this)}
+              addTask={this.addTask.bind(this)}
             />
           );
         })}

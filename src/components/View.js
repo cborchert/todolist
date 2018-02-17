@@ -1,114 +1,149 @@
 import React, { Component } from "react";
+import findIndex from "lodash/findIndex";
 import "./View.scss";
 
-import { totalTasksTime, formatTime } from "../utilities/TaskOperations";
+import {
+  totalTasksTime,
+  formatTime,
+  taskTimerTime
+} from "../utilities/TaskOperations";
 import Task from "./Task";
 
 class View extends Component {
-  //   constructor(props) {
-  //     super(props);
-  //     this.taskRefs = [];
-  //     this.state = {
-  //       focusOnTask: false,
-  //       totalTime: 0
-  //     };
-  //     this.timerInterval = null;
-  //   }
+  constructor(props) {
+    super(props);
+    this.state = {
+      focusOnTask: false,
+      totalTime: 0
+    };
+    this.taskRefs = [];
+    this.timerInterval = null;
+  }
 
-  //   timeTick() {
-  //     this.setState({
-  //       ...this.state,
-  //       totalTime: totalTasksTime(this.props.tasks)
-  //     });
-  //   }
+  tick() {
+    this.setState({
+      ...this.state,
+      totalTime: totalTasksTime(this.props.tasks)
+    });
+  }
 
-  //   newTask(order) {
-  //     this.props.addTask({ title: "", order });
-  //     this.setFocus(order + 1);
-  //   }
+  addTaskToView(order, task) {
+    const { view, addTask, updateView } = this.props;
+    task = task || { id: Date.now(), title: "" };
+    order =
+      typeof order !== "undefined" && order !== false
+        ? order
+        : view.tasks.length;
+    let tasklist = [
+      ...view.tasks.slice(0, order),
+      task.id,
+      ...view.tasks.slice(order)
+    ];
+    updateView(this.props.view.id, { tasks: tasklist });
+    addTask(task);
+    this.setFocus(task.id);
+  }
 
-  //   setFocus(order) {
-  //     this.setState({
-  //       ...this.state,
-  //       focusOnTask: order
-  //     });
-  //   }
+  setFocus(id) {
+    this.setState({
+      focusOnTask: id
+    });
+  }
 
-  //   setFocusById(taskId) {
-  //     const task = this.props.tasks.filter(t => t.id === taskId)[0];
-  //     if (!task) {
-  //       return;
-  //     }
-  //     this.setFocus(task.order);
-  //   }
+  setFocusWithDirection(id, direction) {
+    console.log(id, direction);
+    const { tasks } = this.props.view;
+    let index = tasks.indexOf(id);
+    if (index === -1) {
+      return;
+    }
+    let newIndex = index + direction;
+    newIndex = newIndex < 0 ? tasks.length - 1 : newIndex;
+    newIndex = newIndex >= tasks.length ? 0 : newIndex;
+    let focusId = tasks[newIndex];
+    this.setState({
+      focusOnTask: focusId
+    });
+  }
 
-  //   addTaskButton(event) {
-  //     const order = this.props.tasks.length - 1;
-  //     this.newTask(order);
-  //   }
+  setFocusByOrder(order) {
+    if (order < 0 || order >= this.taskRefs.length) {
+      return;
+    }
+    let id = this.taskRefs[order].id;
+    this.setState({
+      focusOnTask: id
+    });
+  }
 
-  //   setRef(ref, id) {
-  //     //Get rid of old ref if it exists
-  //     this.taskRefs = this.taskRefs.filter(taskRef => taskRef.id !== id);
-  //     this.taskRefs = [...this.taskRefs, { ref, id }];
-  //   }
+  handleAddTaskButtonClick(event) {
+    this.addTaskToView();
+  }
 
-  //   removeTask(order) {
-  //     const task = this.props.tasks[order];
-  //     if (typeof task === "undefined") {
-  //       return;
-  //     }
-  //     this.props.removeTask(task.id);
-  //   }
+  setRef(ref, id) {
+    //Get rid of old ref if it exists
+    this.taskRefs = this.taskRefs.filter(taskRef => taskRef.id !== id);
+    this.taskRefs = [...this.taskRefs, { ref, id }];
+  }
 
-  //   reorderTask(order, newOrder) {
-  //     if (newOrder < 0) {
-  //       newOrder = this.props.tasks.length - 1;
-  //     }
-  //     if (newOrder >= this.props.tasks.length) {
-  //       newOrder = 0;
-  //     }
-  //     const task = this.props.tasks[order];
-  //     if (typeof task === "undefined") {
-  //       return;
-  //     }
-  //     this.props.reorderTask(task.id, newOrder);
-  //   }
+  removeTask(id) {
+    let focusIndex = this.props.view.tasks.indexOf(id) - 1;
+    focusIndex = focusIndex < 0 ? 0 : focusIndex;
+    let focusId = this.props.view.tasks[focusIndex];
+    this.props.removeTask(id);
+    this.setFocus(focusId);
+  }
 
-  //   componentDidMount() {
-  //     this.timerInterval = setInterval(this.timeTick.bind(this), 100);
-  //   }
+  reorderTask(order, newOrder) {
+    const { view, updateView } = this.props;
+    const tasks = view.tasks;
+    if (newOrder < 0) {
+      newOrder = tasks.length - 1;
+    }
+    if (newOrder >= tasks.length) {
+      newOrder = 0;
+    }
+    const taskId = tasks[order];
+    if (typeof taskId === "undefined") {
+      return;
+    }
+    let tempTasks = [...tasks.slice(0, order), ...tasks.slice(order + 1)];
+    let newTasks = [
+      ...tempTasks.slice(0, newOrder),
+      taskId,
+      ...tempTasks.slice(newOrder)
+    ];
 
-  //   componentWillUnmount() {
-  //     clearInterval(this.timerInterval);
-  //   }
+    updateView(view.id, { tasks: newTasks });
+    this.setFocus(taskId);
+  }
 
-  //   componentDidUpdate() {
-  //     const focusOrder = this.state.focusOnTask;
-  //     if (focusOrder !== false) {
-  //       //This assumes that
-  //       const focusTask = this.props.tasks[focusOrder];
-  //       if (typeof focusTask === "undefined") {
-  //         this.setState({
-  //           ...this.state,
-  //           focusOnTask: false
-  //         });
-  //         return;
-  //       }
-  //       const focusId = focusTask.id;
-  //       const focusTaskRef = this.taskRefs.filter(
-  //         taskRef => taskRef.id === focusId
-  //       );
+  componentDidMount() {
+    this.timerInterval = setInterval(this.tick.bind(this), 100);
+  }
 
-  //       if (focusTaskRef.length > 0) {
-  //         focusTaskRef[0].ref.focus();
-  //       }
-  //       this.setState({
-  //         ...this.state,
-  //         focusOnTask: false
-  //       });
-  //     }
-  //   }
+  componentWillUnmount() {
+    clearInterval(this.timerInterval);
+  }
+
+  componentDidUpdate() {
+    const focusId = this.state.focusOnTask;
+    if (focusId !== false) {
+      const matches = this.taskRefs.filter(r => r.id === focusId);
+      if (matches.length < 1) {
+        this.setState({
+          ...this.state,
+          focusOnTask: false
+        });
+        return;
+      }
+      matches[0].ref && matches[0].ref.focus();
+      this.setState({
+        ...this.state,
+        focusOnTask: false
+      });
+    }
+  }
 
   //   render() {
   //     const { tasks, changeTaskDetail, updateStateWithValue } = this.props;
@@ -153,8 +188,25 @@ class View extends Component {
   //     );
   //   }
   render() {
-    const { tasks, updateView, view } = this.props;
-
+    const { tasks, updateView, view, updateTask, addTask } = this.props;
+    // const views = tasks.map((task, i) => <div key={i}>{task.title}</div>);
+    const renderedTasks = tasks.map((task, i) => {
+      return (
+        <Task
+          key={"view-" + view.id + "__task-" + i}
+          order={i}
+          task={task}
+          addTask={addTask}
+          addTaskToView={this.addTaskToView.bind(this)}
+          updateTask={updateTask}
+          setRef={this.setRef.bind(this)}
+          removeTask={this.removeTask.bind(this)}
+          setFocusWithDirection={this.setFocusWithDirection.bind(this)}
+          timerTime={taskTimerTime(task)}
+          reorderTask={this.reorderTask.bind(this)}
+        />
+      );
+    });
     return (
       <div className="view">
         <div className="view__header">
@@ -162,13 +214,17 @@ class View extends Component {
             className="view__title"
             value={view.title}
             onChange={e => {
-              updateView(view.id, "title", e.target.value);
+              updateView(view.id, { title: e.target.value });
             }}
           />
         </div>
-        <div className="view__tasks">
-          {tasks.map((task, i) => <div key={i}>{task.title}</div>)}
-        </div>
+        <div className="view__tasks">{renderedTasks}</div>
+        <button
+          className="view__add-task-button"
+          onClick={this.handleAddTaskButtonClick.bind(this)}
+        >
+          Add Task
+        </button>
       </div>
     );
   }
