@@ -191,6 +191,7 @@ class View extends Component {
           key={"view-" + view.id + "__task-" + i}
           order={i}
           task={task}
+          isChild={typeof task.parent !== "undefined" && task.parent !== false}
           addTask={addTask}
           addTaskToView={this.addTaskToView.bind(this)}
           updateTask={updateTask}

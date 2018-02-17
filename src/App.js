@@ -137,7 +137,12 @@ class App extends Component {
     this.setState(
       {
         ...this.state,
-        tasks: this.state.tasks.filter(task => task.id !== taskId)
+        tasks: this.state.tasks
+          .filter(task => task.id !== taskId)
+          .map(task => ({
+            ...task,
+            children: task.children ? task.children.filter(childId => childId !== taskId) : []
+          }))
       },
       this.reconcileViews
     );
@@ -361,8 +366,8 @@ class App extends Component {
       let task = this.state.tasks.filter(
         stateTask => stateTask.id === taskId
       )[0];
-      if (task.children && task.children.length > 0) {
-        task.children.reverse().forEach(child => {
+      if (task && task.children && task.children.length > 0) {
+        task.children.forEach(child => {
           //Remove children from list
           let childIndex = tasks.indexOf(child);
           if (childIndex > -1) {
@@ -371,13 +376,13 @@ class App extends Component {
               ...tasks.slice(childIndex + 1)
             ];
           }
+        });
+        task.children.reverse().forEach(child => {
           //insert child
           let parentIndex = tasks.indexOf(taskId);
-          console.log(tasks);
           if (parentIndex > -1) {
             tasks.splice(parentIndex + 1, 0, child);
           }
-          console.log(tasks);
         });
       }
     });
@@ -386,8 +391,6 @@ class App extends Component {
       ...view,
       tasks
     };
-
-    console.log(view);
 
     this.setState({
       views: [...this.state.views.filter(v => v.id !== view.id), view]

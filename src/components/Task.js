@@ -190,10 +190,8 @@ class Task extends Component {
     const progress = task.progress === 1 ? 0 : task.progress + 0.5;
     let newTask = { progress };
     if (progress === 1 && taskActiveTimer(task)) {
-      console.log("test");
       newTask = { ...this.timerToggle(true), progress };
     }
-    console.log(newTask);
     updateTask(task.id, newTask);
   }
 
@@ -334,7 +332,8 @@ class Task extends Component {
       updateTask,
       removeTask,
       timerTime,
-      timerActive
+      timerActive,
+      isChild
     } = this.props;
     const progressMarker =
       task.progress <= 0 ? "[ ]" : task.progress >= 1 ? "[X]" : "[/]";
@@ -352,7 +351,7 @@ class Task extends Component {
       this.inputRef === document.activeElement
         ? "task--input-active"
         : "task--input-inactive",
-      task.isChild ? "task--is-child" : ""
+      isChild ? "task--is-child" : ""
     ];
     //console.log(taskClasses);
     const timeValue = formatTime(task.totalTime + timerTime);
