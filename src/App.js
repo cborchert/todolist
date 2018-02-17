@@ -14,11 +14,20 @@ class App extends Component {
     const lastSeen = localStorage.getItem("lastSeen");
     const taskListName = localStorage.getItem("taskListName");
     const appName = localStorage.getItem("appName");
+    const views = localStorage.getItem("views");
+
     this.state = {
       tasks: localTasks ? JSON.parse(localTasks) : [],
-      projects: [],
-      tags: [],
-      taskLists: [],
+      views: views
+        ? views
+        : [
+            {
+              title: "all tasks",
+              tag: "",
+              filter: "",
+              tasks: []
+            }
+          ],
       appName: appName ? appName : "to do (click to edit)",
       taskListName: taskListName ? taskListName : "all tasks (click to edit)",
       lastSeen
@@ -32,6 +41,7 @@ class App extends Component {
     localStorage.setItem("lastSeen", Date.now());
     localStorage.setItem("taskListName", this.state.taskListName);
     localStorage.setItem("appName", this.state.appName);
+    localStorage.setItem("views", this.state.views);
   }
 
   applyToTaskDefaults(newTask) {
