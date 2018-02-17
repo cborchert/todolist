@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import findIndex from "lodash/findIndex";
 import "./App.scss";
 
 import Tasklist from "./components/Tasklist";
@@ -24,6 +25,7 @@ class App extends Component {
         : [
             {
               title: "all tasks",
+              id: -1,
               tag: "",
               filterString: "",
               tasks: [],
@@ -230,6 +232,16 @@ class App extends Component {
     });
   }
 
+  updateView(viewId, key, value) {
+    const { views } = this.state;
+    const index = findIndex(views, v => v.id === viewId);
+    const view = { ...views[index], [key]: value };
+    this.setState({
+      ...this.state,
+      views: [...views.slice(0, index), view, ...views.slice(index + 1)]
+    });
+  }
+
   applyTagFilter(tasks, filterString) {
     //if no filter is to be applied, it gets all tasks
     if (!filterString) {
@@ -295,6 +307,7 @@ class App extends Component {
             <View
               view={view}
               tasks={this.applyTagFilter(tasks, view.filterString)}
+              updateView={this.updateView.bind(this)}
             />
           );
         })}

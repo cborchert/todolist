@@ -153,8 +153,24 @@ class View extends Component {
   //     );
   //   }
   render() {
-    const { tasks } = this.props;
-    return <div>{tasks.map((task, i) => <div key={i}>{task.title}</div>)}</div>;
+    const { tasks, updateView, view } = this.props;
+
+    return (
+      <div className="view">
+        <div className="view__header">
+          <input
+            className="view__title"
+            value={view.title}
+            onChange={e => {
+              updateView(view.id, "title", e.target.value);
+            }}
+          />
+        </div>
+        <div className="view__tasks">
+          {tasks.map((task, i) => <div key={i}>{task.title}</div>)}
+        </div>
+      </div>
+    );
   }
 }
 export default View;
