@@ -61,11 +61,11 @@ class App extends Component {
       billableTime: 0,
       timers: [],
       tags: [],
+      parent: false,
       projects: [],
       taskLists: [],
       timelineStart: false,
       timelineEnd: false,
-      parentTask: false,
       notes: []
     };
 
@@ -197,47 +197,11 @@ class App extends Component {
 
   componentDidMount() {
     if (!this.state.lastSeen) {
-      // this.addTasks([
-      //   {
-      //     id: 1,
-      //     title: "hello, world! #ab"
-      //   },
-      //   {
-      //     id: 2,
-      //     title: "#cd click this text and hit enter to add a task beneath it"
-      //   },
-      //   {
-      //     id: 3,
-      //     title: "#ef click the x to the right to delete this task"
-      //   },
-      //   {
-      //     id: 4,
-      //     title:
-      //       "#cd #ef toggle this task's timer by clicking the time button to the right"
-      //   },
-      //   {
-      //     id: 5,
-      //     title:
-      //       "#ab #cd#ef mark your progress by clicking the checkbox to the left"
-      //   },
-      //   {
-      //     id: 6,
-      //     title:
-      //       "#ab #cd this app currently runs on local storage, so you can come back later :)"
-      //   }
-      // ]);
       this.addTasks([
         {
           id: 1,
-          title: "1"
-        },
-        {
-          id: 2,
-          title: "2"
-        },
-        {
-          id: 3,
-          title: "3"
+          title: "1",
+          children: [2, 3]
         },
         {
           id: 4,
@@ -250,6 +214,24 @@ class App extends Component {
         {
           id: 6,
           title: "6"
+        },
+        {
+          id: 7,
+          title: "7"
+        },
+        {
+          id: 8,
+          title: "8"
+        },
+        {
+          id: 2,
+          title: "2",
+          parent: 1 //Don't like this duplicate data
+        },
+        {
+          id: 3,
+          title: "3",
+          parent: 1
         }
       ]);
     }
@@ -290,6 +272,8 @@ class App extends Component {
       this.reconcileViews
     );
   }
+
+  setTaskAsChild(parent, child) {}
 
   applyTagFilter(tasks, filterString) {
     //if no filter is to be applied, it gets all tasks
@@ -355,6 +339,7 @@ class App extends Component {
       view.filterString
     );
 
+    let children = [];
     //Remove any tasks that are already there.
     let tasks = [
       ...viewTasks,
@@ -362,13 +347,39 @@ class App extends Component {
         .filter(task => viewTasks.indexOf(task.id) === -1)
         .map(task => task.id)
     ].filter(taskId => {
-      let exists = false;
+      let keep = false;
       this.state.tasks.forEach(stateTask => {
         if (stateTask.id === taskId) {
-          exists = true;
+          keep = true;
         }
       });
-      return exists;
+      return keep;
+    });
+    let parents = [];
+    //Remove/Reorder children
+    tasks.forEach(taskId => {
+      let task = this.state.tasks.filter(
+        stateTask => stateTask.id === taskId
+      )[0];
+      if (task.children && task.children.length > 0) {
+        task.children.reverse().forEach(child => {
+          //Remove children from list
+          let childIndex = tasks.indexOf(child);
+          if (childIndex > -1) {
+            tasks = [
+              ...tasks.slice(0, childIndex),
+              ...tasks.slice(childIndex + 1)
+            ];
+          }
+          //insert child
+          let parentIndex = tasks.indexOf(taskId);
+          console.log(tasks);
+          if (parentIndex > -1) {
+            tasks.splice(parentIndex + 1, 0, child);
+          }
+          console.log(tasks);
+        });
+      }
     });
 
     view = {

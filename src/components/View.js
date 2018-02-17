@@ -28,9 +28,7 @@ class View extends Component {
   }
 
   addTaskToView(order, task) {
-    console.log(order);
     const { view, addTask, updateView } = this.props;
-    console.log(view.tasks);
     task = task || { id: Date.now(), title: "" };
     order =
       typeof order !== "undefined" && order !== false
@@ -53,7 +51,6 @@ class View extends Component {
   }
 
   setFocusWithDirection(id, direction) {
-    console.log(id, direction);
     const { tasks } = this.props.view;
     let index = tasks.indexOf(id);
     if (index === -1) {
@@ -88,7 +85,6 @@ class View extends Component {
       ...view.tasks.slice(focusIndex + 1)
     ];
 
-    console.log(view.tasks, taskList);
     removeTask(id);
     this.setFocus(focusId);
   }
