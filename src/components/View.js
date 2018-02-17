@@ -89,14 +89,6 @@ class View extends Component {
     this.taskRefs = [...this.taskRefs, { ref, id }];
   }
 
-  //   removeTask(id) {
-  //     let focusIndex = this.props.view.tasks.indexOf(id) - 1;
-  //     focusIndex = focusIndex < 0 ? 0 : focusIndex;
-  //     let focusId = this.props.view.tasks[focusIndex];
-  //     this.props.removeTask(id);
-  //     this.setFocus(focusId);
-  //   }
-
   removeTask(id) {
     const { view, removeTask, updateView } = this.props;
     let focusIndex = this.props.view.tasks.indexOf(id) - 1;
@@ -109,28 +101,8 @@ class View extends Component {
 
     console.log(view.tasks, taskList);
     removeTask(id);
-    // updateView(view.id, { tasks: taskList }, () => {
-    //   removeTask(id);
-    // });
     this.setFocus(focusId);
   }
-
-  //   removeTask(id) {
-  //     const { view, updateView } = this.props;
-  //     let focusIndex = view.tasks.indexOf(id) - 1;
-  //     focusIndex = focusIndex < 0 ? 0 : focusIndex;
-  //     let taskList = [
-  //       ...view.tasks.slice(0, focusIndex),
-  //       ...view.tasks.slice(focusIndex + 1)
-  //     ];
-
-  //     console.log(taskList, focusIndex);
-  //     let focusId = taskList[focusIndex];
-  //     console.log(focusId);
-  //     updateView(view.id, { tasks: taskList });
-  //     this.props.removeTask(id);
-  //     this.setFocus(focusId);
-  //   }
 
   reorderTask(order, newOrder) {
     const { view, updateView } = this.props;
@@ -256,6 +228,9 @@ class View extends Component {
               updateView(view.id, { title: e.target.value });
             }}
           />
+          <span className="view__time-tracked">
+            {formatTime(this.state.totalTime)} tracked
+          </span>
         </div>
         <div className="view__tasks">{renderedTasks}</div>
         <button

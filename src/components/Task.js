@@ -164,8 +164,6 @@ class Task extends Component {
   }
 
   timerToggle(returnValue) {
-    console.log("hi");
-    console.log(returnValue);
     const { task, updateTask } = this.props,
       currentTime = Date.now();
     let timers = task.timers.slice(),
@@ -193,7 +191,8 @@ class Task extends Component {
     const progress = task.progress === 1 ? 0 : task.progress + 0.5;
     let newTask = { progress };
     if (progress === 1 && taskActiveTimer(task)) {
-      newTask = { ...this.timerToggle(), progress };
+      console.log("test");
+      newTask = { ...this.timerToggle(true), progress };
     }
     console.log(newTask);
     updateTask(task.id, newTask);
