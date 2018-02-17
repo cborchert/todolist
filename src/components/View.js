@@ -5,7 +5,8 @@ import "./View.scss";
 import {
   totalTasksTime,
   formatTime,
-  taskTimerTime
+  taskTimerTime,
+  taskActiveTimer
 } from "../utilities/TaskOperations";
 import Task from "./Task";
 
@@ -28,7 +29,9 @@ class View extends Component {
   }
 
   addTaskToView(order, task) {
+    console.log(order);
     const { view, addTask, updateView } = this.props;
+    console.log(view.tasks);
     task = task || { id: Date.now(), title: "" };
     order =
       typeof order !== "undefined" && order !== false
@@ -86,13 +89,48 @@ class View extends Component {
     this.taskRefs = [...this.taskRefs, { ref, id }];
   }
 
+  //   removeTask(id) {
+  //     let focusIndex = this.props.view.tasks.indexOf(id) - 1;
+  //     focusIndex = focusIndex < 0 ? 0 : focusIndex;
+  //     let focusId = this.props.view.tasks[focusIndex];
+  //     this.props.removeTask(id);
+  //     this.setFocus(focusId);
+  //   }
+
   removeTask(id) {
+    const { view, removeTask, updateView } = this.props;
     let focusIndex = this.props.view.tasks.indexOf(id) - 1;
     focusIndex = focusIndex < 0 ? 0 : focusIndex;
     let focusId = this.props.view.tasks[focusIndex];
-    this.props.removeTask(id);
+    let taskList = [
+      ...view.tasks.slice(0, focusIndex),
+      ...view.tasks.slice(focusIndex + 1)
+    ];
+
+    console.log(view.tasks, taskList);
+    removeTask(id);
+    // updateView(view.id, { tasks: taskList }, () => {
+    //   removeTask(id);
+    // });
     this.setFocus(focusId);
   }
+
+  //   removeTask(id) {
+  //     const { view, updateView } = this.props;
+  //     let focusIndex = view.tasks.indexOf(id) - 1;
+  //     focusIndex = focusIndex < 0 ? 0 : focusIndex;
+  //     let taskList = [
+  //       ...view.tasks.slice(0, focusIndex),
+  //       ...view.tasks.slice(focusIndex + 1)
+  //     ];
+
+  //     console.log(taskList, focusIndex);
+  //     let focusId = taskList[focusIndex];
+  //     console.log(focusId);
+  //     updateView(view.id, { tasks: taskList });
+  //     this.props.removeTask(id);
+  //     this.setFocus(focusId);
+  //   }
 
   reorderTask(order, newOrder) {
     const { view, updateView } = this.props;
@@ -204,6 +242,7 @@ class View extends Component {
           setFocusWithDirection={this.setFocusWithDirection.bind(this)}
           timerTime={taskTimerTime(task)}
           reorderTask={this.reorderTask.bind(this)}
+          timerActive={taskActiveTimer(task) !== false}
         />
       );
     });

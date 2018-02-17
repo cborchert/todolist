@@ -163,7 +163,9 @@ class Task extends Component {
     }
   }
 
-  timerToggle() {
+  timerToggle(returnValue) {
+    console.log("hi");
+    console.log(returnValue);
     const { task, updateTask } = this.props,
       currentTime = Date.now();
     let timers = task.timers.slice(),
@@ -180,16 +182,21 @@ class Task extends Component {
     }
     const progress = 0.5;
     const totalTime = task.totalTime + timeElapsed;
+    if (returnValue) {
+      return { timers, totalTime, progress };
+    }
     updateTask(task.id, { timers, totalTime, progress });
   }
 
   progressToggle() {
     const { updateTask, task } = this.props;
     const progress = task.progress === 1 ? 0 : task.progress + 0.5;
-    updateTask(task.id, { progress });
+    let newTask = { progress };
     if (progress === 1 && taskActiveTimer(task)) {
-      this.timerToggle();
+      newTask = { ...this.timerToggle(), progress };
     }
+    console.log(newTask);
+    updateTask(task.id, newTask);
   }
 
   //   render() {
@@ -323,12 +330,36 @@ class Task extends Component {
   //     );
   //   }
   render() {
-    const { task, setRef, updateTask, removeTask, timerTime } = this.props;
+    const {
+      task,
+      setRef,
+      updateTask,
+      removeTask,
+      timerTime,
+      timerActive
+    } = this.props;
     const progressMarker =
       task.progress <= 0 ? "[ ]" : task.progress >= 1 ? "[X]" : "[/]";
+    const taskClasses = [
+      //base class
+      "task",
+      //progress state
+      task.progress <= 0
+        ? "task--progress-inactive"
+        : task.progress >= 1
+          ? "task--progress-complete"
+          : "task--progress-active",
+      //timer state
+      timerActive ? "task--timer-active" : "task--timer-inactive",
+      this.inputRef === document.activeElement
+        ? "task--input-active"
+        : "task--input-inactive",
+      task.isChild ? "task--is-child" : ""
+    ];
+    //console.log(taskClasses);
     const timeValue = formatTime(task.totalTime + timerTime);
     return (
-      <div className="task">
+      <div className={taskClasses.join(" ")}>
         <button
           className="task__progress-button"
           onClick={this.progressToggle.bind(this)}
@@ -352,7 +383,9 @@ class Task extends Component {
 
         <button
           className="task__timer-button"
-          onClick={this.timerToggle.bind(this)}
+          onClick={e => {
+            this.timerToggle();
+          }}
         >
           <span className="task__time">
             <i className="fa fa-clock-o" />

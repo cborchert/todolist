@@ -197,33 +197,59 @@ class App extends Component {
 
   componentDidMount() {
     if (!this.state.lastSeen) {
+      // this.addTasks([
+      //   {
+      //     id: 1,
+      //     title: "hello, world! #ab"
+      //   },
+      //   {
+      //     id: 2,
+      //     title: "#cd click this text and hit enter to add a task beneath it"
+      //   },
+      //   {
+      //     id: 3,
+      //     title: "#ef click the x to the right to delete this task"
+      //   },
+      //   {
+      //     id: 4,
+      //     title:
+      //       "#cd #ef toggle this task's timer by clicking the time button to the right"
+      //   },
+      //   {
+      //     id: 5,
+      //     title:
+      //       "#ab #cd#ef mark your progress by clicking the checkbox to the left"
+      //   },
+      //   {
+      //     id: 6,
+      //     title:
+      //       "#ab #cd this app currently runs on local storage, so you can come back later :)"
+      //   }
+      // ]);
       this.addTasks([
         {
           id: 1,
-          title: "hello, world! #ab"
+          title: "1"
         },
         {
           id: 2,
-          title: "#cd click this text and hit enter to add a task beneath it"
+          title: "2"
         },
         {
           id: 3,
-          title: "#ef click the x to the right to delete this task"
+          title: "3"
         },
         {
           id: 4,
-          title:
-            "#cd #ef toggle this task's timer by clicking the time button to the right"
+          title: "4"
         },
         {
           id: 5,
-          title:
-            "#ab #cd#ef mark your progress by clicking the checkbox to the left"
+          title: "5"
         },
         {
           id: 6,
-          title:
-            "#ab #cd this app currently runs on local storage, so you can come back later :)"
+          title: "6"
         }
       ]);
     }
@@ -245,6 +271,7 @@ class App extends Component {
     const { views } = this.state;
     const index = findIndex(views, v => v.id === viewId);
     const view = { ...views[index], ...viewValues };
+    console.log(view);
     this.setState({
       ...this.state,
       views: [...views.slice(0, index), view, ...views.slice(index + 1)]
@@ -255,10 +282,13 @@ class App extends Component {
     const { tasks } = this.state;
     const index = findIndex(tasks, t => t.id === taskId);
     const task = { ...tasks[index], ...taskValues };
-    this.setState({
-      ...this.state,
-      tasks: [...tasks.slice(0, index), task, ...tasks.slice(index + 1)]
-    });
+    this.setState(
+      {
+        ...this.state,
+        tasks: [...tasks.slice(0, index), task, ...tasks.slice(index + 1)]
+      },
+      this.reconcileViews
+    );
   }
 
   applyTagFilter(tasks, filterString) {
@@ -331,11 +361,22 @@ class App extends Component {
       ...filteredTasks
         .filter(task => viewTasks.indexOf(task.id) === -1)
         .map(task => task.id)
-    ];
+    ].filter(taskId => {
+      let exists = false;
+      this.state.tasks.forEach(stateTask => {
+        if (stateTask.id === taskId) {
+          exists = true;
+        }
+      });
+      return exists;
+    });
+
     view = {
       ...view,
       tasks
     };
+
+    console.log(view);
 
     this.setState({
       views: [...this.state.views.filter(v => v.id !== view.id), view]
