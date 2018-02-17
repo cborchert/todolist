@@ -25,7 +25,8 @@ class App extends Component {
               title: "all tasks",
               tag: "",
               filter: "",
-              tasks: []
+              tasks: [],
+              permanent: true
             }
           ],
       appName: appName ? appName : "to do (click to edit)",
