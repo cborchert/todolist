@@ -9,7 +9,7 @@ class App extends Component {
     super(props);
 
     //Debugging :)
-    //localStorage.clear();
+    localStorage.clear();
     const localTasks = localStorage.getItem("tasks");
     const lastSeen = localStorage.getItem("lastSeen");
     const taskListName = localStorage.getItem("taskListName");
