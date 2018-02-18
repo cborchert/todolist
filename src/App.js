@@ -300,7 +300,8 @@ class App extends Component {
   reconcileViews() {
     let views = [];
     this.state.views.forEach(view => {
-      views.push(this.reconcileViewTasks(view));
+      let reconciledView = this.reconcileViewTasks(view);
+      views.push(reconciledView);
     });
 
     this.setState({
@@ -351,13 +352,25 @@ class App extends Component {
             ];
           }
         });
-        task.children.reverse().forEach(child => {
-          //insert child
-          let parentIndex = tasks.indexOf(taskId);
-          if (parentIndex > -1) {
-            tasks.splice(parentIndex + 1, 0, child);
-          }
-        });
+        // task.children.reverse().forEach(child => {
+        console.log(task.children);
+        // task.children.reverse().forEach((child, i) => {
+        //   //insert child
+        //   let parentIndex = tasks.indexOf(taskId);
+        //   if (parentIndex > -1) {
+        //     tasks.splice(parentIndex + 1, 0, child);
+        //   }
+        // });
+        let parentIndex = tasks.indexOf(taskId);
+        console.log(parentIndex, tasks, task.children);
+        if (parentIndex > -1) {
+          tasks = [
+            ...tasks.slice(0, parentIndex + 1),
+            ...task.children,
+            ...tasks.slice(parentIndex + 1)
+          ];
+          console.log(tasks);
+        }
       }
     });
 
