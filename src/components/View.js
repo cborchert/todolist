@@ -90,13 +90,37 @@ class View extends Component {
   }
 
   reorderTask(order, newOrder) {
-    const { view, updateView } = this.props;
+    const { view, updateView, updateTask } = this.props;
     const tasks = view.tasks;
-    if (newOrder < 0) {
-      newOrder = tasks.length - 1;
+    //Check if it's a child.
+    const task = this.props.tasks[order];
+
+    let low = 0,
+      high = tasks.length - 1,
+      reorderChildren = false,
+      parentIndex,
+      parent;
+    if (task && typeof task.parent !== "undefined" && task.parent !== false) {
+      reorderChildren = true;
+      //This is childed.
+      //get lower and higher limits
+      parentIndex = tasks.indexOf(task.parent);
+      parent = this.props.tasks[parentIndex];
+
+      low = high = parentIndex + 1;
+      parent.children.forEach(child => {
+        let current = tasks.indexOf(child);
+        if (current > high) {
+          high = current;
+        }
+      });
     }
-    if (newOrder >= tasks.length) {
-      newOrder = 0;
+
+    if (newOrder < low) {
+      newOrder = high;
+    }
+    if (newOrder > high) {
+      newOrder = low;
     }
     const taskId = tasks[order];
     if (typeof taskId === "undefined") {
@@ -108,6 +132,26 @@ class View extends Component {
       taskId,
       ...tempTasks.slice(newOrder)
     ];
+
+    if (reorderChildren) {
+      let parentChildren = [...parent.children],
+        childIndex = parentChildren.indexOf(task.id),
+        diff = newOrder - order,
+        newChildIndex = childIndex + diff;
+      console.log(parentChildren);
+      parentChildren = [
+        ...parentChildren.slice(0, childIndex),
+        ...parentChildren.slice(childIndex + 1)
+      ];
+      console.log(parentChildren);
+      parentChildren = [
+        ...parentChildren.slice(0, newChildIndex),
+        task.id,
+        ...parentChildren.slice(newChildIndex)
+      ];
+      console.log(parentIndex, parentChildren);
+      updateTask(parent.id, { children: [...parentChildren] });
+    }
 
     updateView(view.id, { tasks: newTasks });
     this.setFocus(taskId);

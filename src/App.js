@@ -234,7 +234,9 @@ class App extends Component {
   updateTask(taskId, taskValues) {
     const { tasks } = this.state;
     const index = findIndex(tasks, t => t.id === taskId);
+    console.log(tasks[index]);
     const task = { ...tasks[index], ...taskValues };
+    console.log(task);
     this.setState(
       {
         ...this.state,
@@ -260,7 +262,8 @@ class App extends Component {
           }
           return task;
         })
-      },this.reconcileViews
+      },
+      this.reconcileViews
     );
   }
 
@@ -309,6 +312,7 @@ class App extends Component {
         let matchesFilter = true;
         //Must match each filter part
         filterPart.forEach(filter => {
+          console.log(task);
           let strPos = task.title.indexOf(filter);
           if (strPos >= 0) {
             let char = task.title[strPos + filter.length];
