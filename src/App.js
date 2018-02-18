@@ -382,7 +382,7 @@ class App extends Component {
   }
 
   render() {
-    const { views, tasks } = this.state;
+    const { views } = this.state;
     return (
       <div className="app">
         <input
