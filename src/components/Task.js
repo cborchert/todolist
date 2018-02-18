@@ -40,14 +40,6 @@ class Task extends Component {
     var key = e.which || e.keyCode;
 
     if (this.inputRef === document.activeElement) {
-      // const {
-      //   newTask,
-      //   setFocus,
-      //   task,
-      //   removeTask,
-      //   reorderTask,
-      //   changeTaskDetail
-      // } = this.props;
       const {
         addTaskToView,
         order,
@@ -55,7 +47,8 @@ class Task extends Component {
         removeTask,
         setFocusWithDirection,
         reorderTask,
-        childTask
+        childTask,
+        unChildTask
       } = this.props;
       const isShift = !!window.event.shiftKey;
       //Shift key events
@@ -132,29 +125,13 @@ class Task extends Component {
             reorderTask(order, order + 1);
             //reorder down
             break;
-          //     case 37:
-          //       //shift + left
-          //       //unchild from parent
-          //       e.preventDefault();
-          //       e.stopImmediatePropagation();
-          //       changeTaskDetail(task.id, "isChild", false);
-          //       //do nothing
-          //       break;
-          //     case 39:
-          //       //shift + right
-          //       //do nothing
-          //       //child to parent element
-          //       e.preventDefault();
-          //       e.stopImmediatePropagation();
-          //       changeTaskDetail(task.id, "isChild", true);
-          //       break;
 
-          //     case 9:
-          //       //shift+tab
-          //       e.preventDefault();
-          //       e.stopImmediatePropagation();
-          //       changeTaskDetail(task.id, "isChild", false);
-          //       break;
+          case 9:
+            //shift+tab
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            unChildTask(task.id);
+            break;
           default:
             //do nothing
             break;

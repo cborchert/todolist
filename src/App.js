@@ -244,11 +244,31 @@ class App extends Component {
     );
   }
 
+  unsetTaskAsChild(child) {
+    this.setState(
+      {
+        ...this.state,
+        tasks: this.state.tasks.map(task => {
+          if (task.id == child) {
+            task.parent = false;
+          }
+          if (task.children) {
+            let childIndex = task.children.indexOf(child);
+            if (childIndex > 0) {
+              task.children.splice(childIndex, 1);
+            }
+          }
+          return task;
+        })
+      },this.reconcileViews
+    );
+  }
+
   setTaskAsChild(parent, child) {
     this.setState({
       ...this.state,
       tasks: this.state.tasks.map(task => {
-        if(!task.children){
+        if (!task.children) {
           task.children = [];
         }
         if (task.id === parent) {
@@ -419,6 +439,7 @@ class App extends Component {
               updateTask={this.updateTask.bind(this)}
               addTask={this.addTask.bind(this)}
               setTaskAsChild={this.setTaskAsChild.bind(this)}
+              unsetTaskAsChild={this.unsetTaskAsChild.bind(this)}
             />
           );
         })}

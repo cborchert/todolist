@@ -215,7 +215,14 @@ class View extends Component {
   //     );
   //   }
   render() {
-    const { tasks, updateView, view, updateTask, addTask } = this.props;
+    const {
+      tasks,
+      updateView,
+      view,
+      updateTask,
+      addTask,
+      unsetTaskAsChild
+    } = this.props;
     // const views = tasks.map((task, i) => <div key={i}>{task.title}</div>);
     const renderedTasks = tasks.map((task, i) => {
       return (
@@ -234,6 +241,7 @@ class View extends Component {
           reorderTask={this.reorderTask.bind(this)}
           timerActive={taskActiveTimer(task) !== false}
           childTask={this.childTask.bind(this)}
+          unChildTask={unsetTaskAsChild}
         />
       );
     });
