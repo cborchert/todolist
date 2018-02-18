@@ -222,11 +222,9 @@ class App extends Component {
   }
 
   updateView(viewId, viewValues) {
-    // console.log("updateView", this.state.tasks);
     const { views } = this.state;
     const index = findIndex(views, v => v.id === viewId);
     const view = { ...views[index], ...viewValues };
-    // console.log("updateView 2", view);
     this.setState({
       ...this.state,
       views: [...views.slice(0, index), view, ...views.slice(index + 1)]
@@ -246,7 +244,23 @@ class App extends Component {
     );
   }
 
-  setTaskAsChild(parent, child) {}
+  setTaskAsChild(parent, child) {
+    this.setState({
+      ...this.state,
+      tasks: this.state.tasks.map(task => {
+        if(!task.children){
+          task.children = [];
+        }
+        if (task.id === parent) {
+          task.children.push(child);
+        }
+        if (task.id === child) {
+          task.parent = parent;
+        }
+        return task;
+      })
+    });
+  }
 
   applyTagFilter(tasks, filterString) {
     if (!filterString) {
@@ -352,24 +366,13 @@ class App extends Component {
             ];
           }
         });
-        // task.children.reverse().forEach(child => {
-        console.log(task.children);
-        // task.children.reverse().forEach((child, i) => {
-        //   //insert child
-        //   let parentIndex = tasks.indexOf(taskId);
-        //   if (parentIndex > -1) {
-        //     tasks.splice(parentIndex + 1, 0, child);
-        //   }
-        // });
         let parentIndex = tasks.indexOf(taskId);
-        console.log(parentIndex, tasks, task.children);
         if (parentIndex > -1) {
           tasks = [
             ...tasks.slice(0, parentIndex + 1),
             ...task.children,
             ...tasks.slice(parentIndex + 1)
           ];
-          console.log(tasks);
         }
       }
     });
@@ -415,6 +418,7 @@ class App extends Component {
               removeTask={this.removeTask.bind(this)}
               updateTask={this.updateTask.bind(this)}
               addTask={this.addTask.bind(this)}
+              setTaskAsChild={this.setTaskAsChild.bind(this)}
             />
           );
         })}

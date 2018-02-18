@@ -113,6 +113,38 @@ class View extends Component {
     this.setFocus(taskId);
   }
 
+  childTask(order) {
+    const { tasks, setTaskAsChild } = this.props;
+    //look for the parent id
+    if (
+      typeof tasks[order].parent !== "undefined" &&
+      tasks[order].parent !== false
+    ) {
+      //You've already got a daddy.
+      return;
+    }
+    if (
+      typeof tasks[order].children !== "undefined" &&
+      tasks[order].children.length > 0
+    ) {
+      //You've already got kids!
+      return;
+    }
+    const childId = tasks[order].id;
+    let index = order,
+      parentId = false;
+    while (--index > -1 && parentId === false) {
+      let currentTask = tasks[index];
+      let currentParent = currentTask.parent;
+      if (typeof currentParent === "undefined" || currentParent === false) {
+        parentId = currentTask.id;
+      }
+    }
+    if (parentId !== false) {
+      setTaskAsChild(parentId, childId);
+    }
+  }
+
   componentDidMount() {
     this.timerInterval = setInterval(this.tick.bind(this), 100);
   }
@@ -201,6 +233,7 @@ class View extends Component {
           timerTime={taskTimerTime(task)}
           reorderTask={this.reorderTask.bind(this)}
           timerActive={taskActiveTimer(task) !== false}
+          childTask={this.childTask.bind(this)}
         />
       );
     });

@@ -54,7 +54,8 @@ class Task extends Component {
         task,
         removeTask,
         setFocusWithDirection,
-        reorderTask
+        reorderTask,
+        childTask
       } = this.props;
       const isShift = !!window.event.shiftKey;
       //Shift key events
@@ -90,12 +91,12 @@ class Task extends Component {
             setFocusWithDirection(task.id, 1);
             break;
 
-          // case 9:
-          //   //tab
-          //   e.preventDefault();
-          //   e.stopImmediatePropagation();
-          //   changeTaskDetail(task.id, "isChild", true);
-          //   break;
+          case 9:
+            //tab
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            childTask(order);
+            break;
 
           default:
             //do nothing
