@@ -30,6 +30,14 @@ class App extends Component {
               filterString: "",
               tasks: [],
               permanent: true
+            },
+            {
+              title: "#a",
+              id: 1,
+              tag: "",
+              filterString: "#a",
+              tasks: [],
+              permanent: true
             }
           ],
       appName: appName ? appName : "to do (click to edit)",
@@ -83,11 +91,12 @@ class App extends Component {
 
     const task = this.applyToTaskDefaults(newTask);
 
-    const tasks = orderTasks([
-      ...this.state.tasks.slice(0, newTask.order),
-      task,
-      ...this.state.tasks.slice(newTask.order)
-    ]);
+    // const tasks = orderTasks([
+    //   ...this.state.tasks.slice(0, newTask.order),
+    //   task,
+    //   ...this.state.tasks.slice(newTask.order)
+    // ]);
+    const tasks = [...this.state.tasks, task];
 
     this.setState(
       {
@@ -110,24 +119,31 @@ class App extends Component {
       tasks.push(task);
     });
 
-    let stateTasks = [...this.state.tasks];
+    // let stateTasks = [...this.state.tasks];
 
-    tasks.forEach(task => {
-      let order =
-        typeof task.order !== "undefined" && task.order !== false
-          ? task.order + 1
-          : stateTasks.length + 1;
-      stateTasks = [
-        ...stateTasks.slice(0, order),
-        task,
-        ...stateTasks.slice(order)
-      ];
-    });
+    // tasks.forEach(task => {
+    //   let order =
+    //     typeof task.order !== "undefined" && task.order !== false
+    //       ? task.order + 1
+    //       : stateTasks.length + 1;
+    //   stateTasks = [
+    //     ...stateTasks.slice(0, order),
+    //     task,
+    //     ...stateTasks.slice(order)
+    //   ];
+    // });
 
+    // this.setState(
+    //   {
+    //     ...this.state,
+    //     tasks: orderTasks(stateTasks)
+    //   },
+    //   this.reconcileViews
+    // );
     this.setState(
       {
         ...this.state,
-        tasks: orderTasks(stateTasks)
+        tasks
       },
       this.reconcileViews
     );
@@ -141,7 +157,9 @@ class App extends Component {
           .filter(task => task.id !== taskId)
           .map(task => ({
             ...task,
-            children: task.children ? task.children.filter(childId => childId !== taskId) : []
+            children: task.children
+              ? task.children.filter(childId => childId !== taskId)
+              : []
           }))
       },
       this.reconcileViews
@@ -149,6 +167,7 @@ class App extends Component {
   }
 
   reorderTask(taskId, newOrder) {
+    return;
     const task = this.state.tasks.slice().filter(t => t.id === taskId)[0];
     if (typeof task === "undefined") {
       return;
@@ -159,11 +178,11 @@ class App extends Component {
       ...this.state.tasks.slice(task.order + 1)
     ];
 
-    const tasks = orderTasks([
+    const tasks = [
       ...tasksWithoutTask.slice(0, newOrder),
       task,
       ...tasksWithoutTask.slice(newOrder)
-    ]);
+    ];
 
     this.setState({
       ...this.state,
@@ -255,10 +274,11 @@ class App extends Component {
   }
 
   updateView(viewId, viewValues) {
+    // console.log("updateView", this.state.tasks);
     const { views } = this.state;
     const index = findIndex(views, v => v.id === viewId);
     const view = { ...views[index], ...viewValues };
-    console.log(view);
+    // console.log("updateView 2", view);
     this.setState({
       ...this.state,
       views: [...views.slice(0, index), view, ...views.slice(index + 1)]
@@ -281,8 +301,10 @@ class App extends Component {
   setTaskAsChild(parent, child) {}
 
   applyTagFilter(tasks, filterString) {
+    // console.log("applyTagFilter tasks, filterString", tasks, filterString);
     //if no filter is to be applied, it gets all tasks
     if (!filterString) {
+      // console.log("applyTagFilter: just returning tasks");
       return tasks;
     }
     let filters = [];
@@ -300,6 +322,8 @@ class App extends Component {
       }
       filters.push(filterParts);
     }
+
+    // console.log("applyTagFilter filters", filters);
     //TODO Clean this up
     const filteredTasks = tasks.filter(task => {
       let includeTask = false;
@@ -330,18 +354,36 @@ class App extends Component {
   }
 
   reconcileViews() {
+    // console.log("reconcileViews", this.state.tasks);
+    let views = [];
     this.state.views.forEach(view => {
-      this.reconcileViewTasks(view);
+      views.push(this.reconcileViewTasks(view));
+    });
+
+    this.setState({
+      ...this.state,
+      views
     });
   }
 
   reconcileViewTasks(view) {
+    // console.log(
+    //   "reconcileViewTasks view.id state.tasks",
+    //   view.id,
+    //   this.state.tasks
+    // );
     //start with the task ids included
     let viewTasks = view.tasks;
     //then add any tasks that happen to fit the filter
     let filteredTasks = this.applyTagFilter(
       this.state.tasks,
       view.filterString
+    );
+
+    console.log(
+      "reconcileViewTasks view.id filteredTasks",
+      view.id,
+      filteredTasks
     );
 
     let children = [];
@@ -387,25 +429,29 @@ class App extends Component {
       }
     });
 
+    console.log("reconcileViewTasks view.id tasks", view.id, tasks);
+
     view = {
       ...view,
       tasks
     };
 
-    this.setState({
-      views: [...this.state.views.filter(v => v.id !== view.id), view]
-    });
+    // this.setState({
+    //   views: [...this.state.views.filter(v => v.id !== view.id), view]
+    // });
+    return view;
   }
 
   getViewTasks(view) {
     let tasks = [];
     let viewTasks = [...view.tasks];
     viewTasks.forEach(taskId => {
-      let matchedTasks = this.state.tasks.filter(t => t.id === taskId);
+      let matchedTasks = [...this.state.tasks].filter(t => t.id === taskId);
       if (matchedTasks.length > 0) {
         tasks.push(matchedTasks[0]);
       }
     });
+    console.log("getViewTasks view.id tasks", view.id, tasks);
     return tasks;
   }
 
