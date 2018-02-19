@@ -30,7 +30,7 @@ class App extends Component {
               filterString: "",
               tasks: [],
               permanent: true
-            },
+            }
             // {
             //   title: "#a",
             //   id: 1,
@@ -170,8 +170,8 @@ class App extends Component {
   componentDidMount() {
     if (!this.state.lastSeen) {
       let tasks = [];
-      for(let i = 1; i<= 100; i++){
-        tasks.push({id:i, title: i});
+      for (let i = 1; i <= 100; i++) {
+        tasks.push({ id: i, title: i });
       }
       this.addTasks(tasks);
       // this.addTasks([
@@ -220,34 +220,37 @@ class App extends Component {
   }
 
   updateStateWithValue(key, value) {
-    this.setState({
-      ...this.state,
-      [key]: value
-    });
+    this.setState(
+      {
+        ...this.state,
+        [key]: value
+      },
+      this.reconcileViews
+    );
   }
 
   updateView(viewId, viewValues) {
     const { views } = this.state;
     const index = findIndex(views, v => v.id === viewId);
     const view = { ...views[index], ...viewValues };
-    this.setState({
-      ...this.state,
-      views: [...views.slice(0, index), view, ...views.slice(index + 1)]
-    });
-  }
-
-  updateTask(taskId, taskValues) {
-    const { tasks } = this.state;
-    const index = findIndex(tasks, t => t.id === taskId);
-    console.log(tasks[index]);
-    const task = { ...tasks[index], ...taskValues };
-    console.log(task);
     this.setState(
       {
         ...this.state,
-        tasks: [...tasks.slice(0, index), task, ...tasks.slice(index + 1)]
+        views: [...views.slice(0, index), view, ...views.slice(index + 1)]
       },
       this.reconcileViews
+    );
+  }
+
+  updateTask(taskId, taskValues) {
+    this.setState(
+      {
+        ...this.state,
+        tasks: this.state.tasks.map(
+          t => (t.id !== taskId ? t : { ...t, ...taskValues })
+        )
+      },
+      // this.reconcileViews
     );
   }
 
@@ -256,7 +259,7 @@ class App extends Component {
       {
         ...this.state,
         tasks: this.state.tasks.map(task => {
-          if (task.id == child) {
+          if (task.id === child) {
             task.parent = false;
           }
           if (task.children) {
@@ -317,7 +320,6 @@ class App extends Component {
         let matchesFilter = true;
         //Must match each filter part
         filterPart.forEach(filter => {
-          console.log(task);
           let strPos = task.title.indexOf(filter);
           if (strPos >= 0) {
             let char = task.title[strPos + filter.length];
@@ -410,7 +412,6 @@ class App extends Component {
       ...view,
       tasks
     };
-
     return view;
   }
 
@@ -438,11 +439,13 @@ class App extends Component {
           }}
         />
         {views.map((view, i) => {
+          let tasks = this.getViewTasks(view);
+          // let tasks = this.state.tasks;
           return (
             <View
               key={"view-" + i}
               view={view}
-              tasks={this.getViewTasks(view)}
+              tasks={tasks}
               updateView={this.updateView.bind(this)}
               removeTask={this.removeTask.bind(this)}
               updateTask={this.updateTask.bind(this)}

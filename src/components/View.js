@@ -138,18 +138,15 @@ class View extends Component {
         childIndex = parentChildren.indexOf(task.id),
         diff = newOrder - order,
         newChildIndex = childIndex + diff;
-      console.log(parentChildren);
       parentChildren = [
         ...parentChildren.slice(0, childIndex),
         ...parentChildren.slice(childIndex + 1)
       ];
-      console.log(parentChildren);
       parentChildren = [
         ...parentChildren.slice(0, newChildIndex),
         task.id,
         ...parentChildren.slice(newChildIndex)
       ];
-      console.log(parentIndex, parentChildren);
       updateTask(parent.id, { children: [...parentChildren] });
     }
 
@@ -190,7 +187,7 @@ class View extends Component {
   }
 
   componentDidMount() {
-    this.timerInterval = setInterval(this.tick.bind(this), 100);
+    this.timerInterval = setInterval(this.tick.bind(this), 500);
   }
 
   componentWillUnmount() {
@@ -216,48 +213,6 @@ class View extends Component {
     }
   }
 
-  //   render() {
-  //     const { tasks, changeTaskDetail, updateStateWithValue } = this.props;
-  //     return (
-  //       <div className="view">
-  //         <div className="view__header">
-  //           <input
-  //             className="view__title"
-  //             value={this.props.title}
-  //             onChange={e => {
-  //               updateStateWithValue("taskListName", e.target.value);
-  //             }}
-  //           />
-  //           <span className="view__time-tracked">
-  //             {formatTime(this.state.totalTime)} tracked
-  //           </span>
-  //         </div>
-  //         <div className="view__tasks">
-  //           {tasks.map((task, i) => {
-  //             return (
-  //               <Task
-  //                 key={i}
-  //                 task={task}
-  //                 changeTaskDetail={changeTaskDetail}
-  //                 newTask={this.newTask.bind(this)}
-  //                 setFocus={this.setFocus.bind(this)}
-  //                 setFocusById={this.setFocusById.bind(this)}
-  //                 setRef={this.setRef.bind(this)}
-  //                 removeTask={this.removeTask.bind(this)}
-  //                 reorderTask={this.reorderTask.bind(this)}
-  //               />
-  //             );
-  //           })}
-  //         </div>
-  //         <button
-  //           className="view__add-task-button"
-  //           onClick={this.addTaskButton.bind(this)}
-  //         >
-  //           Add Task
-  //         </button>
-  //       </div>
-  //     );
-  //   }
   render() {
     const {
       tasks,
