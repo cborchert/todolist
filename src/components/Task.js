@@ -35,10 +35,11 @@ class Task extends Component {
     document.removeEventListener("keydown", this.handleKeypress);
   }
 
-  handleKeypress(e) {
+  handleKeypress(event) {
     if (this.inputRef !== document.activeElement) {
       return;
     }
+    const e = event || window.event;
     var key = e.which || e.keyCode;
     const {
       addTaskToView,
@@ -50,7 +51,8 @@ class Task extends Component {
       childTask,
       unChildTask
     } = this.props;
-    const isShift = !!window.event.shiftKey;
+
+    const isShift = !!e.shiftKey;
     //Shift key events
     if (!isShift) {
       switch (key) {
