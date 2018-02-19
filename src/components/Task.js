@@ -16,7 +16,6 @@ class Task extends Component {
 
   shouldComponentUpdate(np, ns) {
     const { task, order, timerTime, timerActive, isChild } = this.props;
-
     return (
       task.title !== np.task.title ||
       task.totalTime !== np.task.totalTime ||
@@ -103,12 +102,12 @@ class Task extends Component {
     //   Shift + Keyevents;
     if (isShift) {
       switch (key) {
-        case 13:
-          //shift + enter
-          e.preventDefault();
-          e.stopImmediatePropagation();
-          addTaskToView(order);
-          break;
+        // case 13:
+        //   //shift + enter
+        //   e.preventDefault();
+        //   e.stopImmediatePropagation();
+        //   addTaskToView(order);
+        //   break;
         case 8:
           //shift + delete
           e.preventDefault();
