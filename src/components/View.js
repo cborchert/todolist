@@ -114,6 +114,36 @@ class View extends Component {
           high = current;
         }
       });
+    } else {
+      //Make sure that the place it's moving into isn't childed
+      let direction = newOrder - order > 0 ? 1 : -1;
+      console.log("order", order);
+      console.log("newOrder", newOrder);
+      let canMove = false;
+      let didSkip = false;
+      while (!canMove) {
+        canMove = true;
+        let nextOrder = newOrder + 1;
+        if (nextOrder > high) {
+          nextOrder = low;
+        }
+        if (nextOrder < low) {
+          nextOrder = high;
+        }
+        let replacedTask = this.props.tasks[newOrder];
+        let afterReplacedTask = this.props.tasks[nextOrder];
+        if (
+          (afterReplacedTask && afterReplacedTask.parent) ||
+          (replacedTask && replacedTask.parent)
+        ) {
+          newOrder = newOrder + direction;
+          canMove = false;
+          didSkip = true;
+        }
+      }
+      if (didSkip) {
+        newOrder = newOrder - direction;
+      }
     }
 
     if (newOrder < low) {

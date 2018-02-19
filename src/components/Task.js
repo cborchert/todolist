@@ -70,7 +70,7 @@ class Task extends Component {
           e.preventDefault();
           e.stopImmediatePropagation();
           addTaskToView(order + 1);
-          //TODO: Check if child
+          //Check if child
           if (task.parent) {
             childTask(order + 1);
           }
