@@ -31,14 +31,14 @@ class App extends Component {
               tasks: [],
               permanent: true
             },
-            {
-              title: "#a",
-              id: 1,
-              tag: "",
-              filterString: "#a",
-              tasks: [],
-              permanent: true
-            }
+            // {
+            //   title: "#a",
+            //   id: 1,
+            //   tag: "",
+            //   filterString: "#a",
+            //   tasks: [],
+            //   permanent: true
+            // }
           ],
       appName: appName ? appName : "to do (click to edit)",
       taskListName: taskListName ? taskListName : "all tasks (click to edit)",
@@ -169,43 +169,48 @@ class App extends Component {
 
   componentDidMount() {
     if (!this.state.lastSeen) {
-      this.addTasks([
-        {
-          id: 1,
-          title: "1",
-          children: [2, 3]
-        },
-        {
-          id: 4,
-          title: "4"
-        },
-        {
-          id: 5,
-          title: "5"
-        },
-        {
-          id: 6,
-          title: "6"
-        },
-        {
-          id: 7,
-          title: "7"
-        },
-        {
-          id: 8,
-          title: "8"
-        },
-        {
-          id: 2,
-          title: "2",
-          parent: 1 //Don't like this duplicate data
-        },
-        {
-          id: 3,
-          title: "3",
-          parent: 1
-        }
-      ]);
+      let tasks = [];
+      for(let i = 1; i<= 100; i++){
+        tasks.push({id:i, title: i});
+      }
+      this.addTasks(tasks);
+      // this.addTasks([
+      //   {
+      //     id: 1,
+      //     title: "1",
+      //     children: [2, 3]
+      //   },
+      //   {
+      //     id: 4,
+      //     title: "4"
+      //   },
+      //   {
+      //     id: 5,
+      //     title: "5"
+      //   },
+      //   {
+      //     id: 6,
+      //     title: "6"
+      //   },
+      //   {
+      //     id: 7,
+      //     title: "7"
+      //   },
+      //   {
+      //     id: 8,
+      //     title: "8"
+      //   },
+      //   {
+      //     id: 2,
+      //     title: "2",
+      //     parent: 1 //Don't like this duplicate data
+      //   },
+      //   {
+      //     id: 3,
+      //     title: "3",
+      //     parent: 1
+      //   }
+      // ]);
     }
     this.cacheInterval = setInterval(this.cacheLocally.bind(this), 1000);
   }
