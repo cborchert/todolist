@@ -53,8 +53,9 @@ class Task extends Component {
     } = this.props;
 
     const isShift = !!e.shiftKey;
+    const isMeta = !!e.metaKey;
     //Shift key events
-    if (!isShift) {
+    if (!isShift && !isMeta) {
       switch (key) {
         case 8:
           //delete
@@ -102,7 +103,7 @@ class Task extends Component {
       }
     }
     //   Shift + Keyevents;
-    if (isShift) {
+    if (isShift && !isMeta) {
       switch (key) {
         // case 13:
         //   //shift + enter
@@ -110,12 +111,6 @@ class Task extends Component {
         //   e.stopImmediatePropagation();
         //   addTaskToView(order);
         //   break;
-        case 8:
-          //shift + delete
-          e.preventDefault();
-          e.stopImmediatePropagation();
-          removeTask(task.id);
-          break;
         case 38:
           //shift + up
           e.preventDefault();
@@ -139,6 +134,26 @@ class Task extends Component {
           break;
         default:
           //do nothing
+          break;
+      }
+    }
+    //meta
+    if (!isShift && isMeta) {
+      switch (key) {
+        default:
+          break;
+      }
+    }
+    //Shift + meta
+    if (isShift && isMeta) {
+      switch (key) {
+        case 8:
+          //shift + delete
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          removeTask(task.id);
+          break;
+        default:
           break;
       }
     }

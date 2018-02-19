@@ -463,7 +463,7 @@ class App extends Component {
               <b>shift + enter</b>: new task before this task
             </li> */}
             <li>
-              <b>shift + delete/backspace</b>: delete task
+              <b>ctrl/⌘ + shift + delete/backspace</b>: delete task
             </li>
             <li>
               <b>delete/backspace</b> on empty task: delete task
