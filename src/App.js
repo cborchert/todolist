@@ -169,7 +169,46 @@ class App extends Component {
       // for (let i = 1; i <= 100; i++) {
       //   tasks.push({ id: i, title: i });
       // }
-      let tasks = [{ id: 1, title: "hello, world!", order: 1 }];
+      let tasks = [
+        {
+          id: 1,
+          title: "why hello! i didn't see you there! 👋 ",
+          order: 1
+        },
+        {
+          id: 2,
+          title: "click this text and hit enter to add a task beneath it",
+          order: 2
+        },
+        {
+          id: 3,
+          title: "click the x to the right to delete this task",
+          order: 3
+        },
+        {
+          id: 4,
+          title:
+            "toggle this task's timer by clicking the time button to the right",
+          order: 4
+        },
+        {
+          id: 5,
+          title: "mark your progress by clicking the checkbox to the left",
+          order: 5
+        },
+        {
+          id: 6,
+          title:
+            "this app runs on local storage, so you can come back later 🤞😉",
+          order: 6
+        },
+        {
+          id: 7,
+          title:
+            "p.s. try using the shorcuts listed below... try tab, shift + up, etc!!",
+          order: 7
+        }
+      ];
       this.addTasks(tasks);
     }
     this.cacheInterval = setInterval(this.cacheLocally.bind(this), 1000);
@@ -220,10 +259,7 @@ class App extends Component {
             task.parent = false;
           }
           if (task.children) {
-            let childIndex = task.children.indexOf(child);
-            if (childIndex > 0) {
-              task.children.splice(childIndex, 1);
-            }
+            task.children = task.children.filter(childId => childId !== child);
           }
           return task;
         })
@@ -239,7 +275,7 @@ class App extends Component {
         if (!task.children) {
           task.children = [];
         }
-        if (task.id === parent) {
+        if (task.id === parent && task.children.indexOf(child) === -1) {
           task.children.push(child);
         }
         if (task.id === child) {
