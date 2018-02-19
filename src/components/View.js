@@ -115,10 +115,13 @@ class View extends Component {
         }
       });
     } else {
+      //if it's a parent
+
       //Make sure that the place it's moving into isn't childed
       let direction = newOrder - order > 0 ? 1 : -1;
-      console.log("order", order);
-      console.log("newOrder", newOrder);
+      if (task.children && direction === 1) {
+        newOrder += task.children.length;
+      }
       let canMove = false;
       let didSkip = false;
       while (!canMove) {
@@ -181,6 +184,7 @@ class View extends Component {
     }
 
     updateView(view.id, { tasks: newTasks });
+    updateTask(task.id);
     this.setFocus(taskId);
   }
 
