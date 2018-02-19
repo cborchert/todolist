@@ -233,13 +233,10 @@ class App extends Component {
     const { views } = this.state;
     const index = findIndex(views, v => v.id === viewId);
     const view = { ...views[index], ...viewValues };
-    this.setState(
-      {
-        ...this.state,
-        views: [...views.slice(0, index), view, ...views.slice(index + 1)]
-      },
-      this.reconcileViews
-    );
+    this.setState({
+      ...this.state,
+      views: [...views.slice(0, index), view, ...views.slice(index + 1)]
+    });
   }
 
   updateTask(taskId, taskValues) {
@@ -250,7 +247,7 @@ class App extends Component {
           t => (t.id !== taskId ? t : { ...t, ...taskValues })
         )
       },
-      // this.reconcileViews
+      this.reconcileViews
     );
   }
 

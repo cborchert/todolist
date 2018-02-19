@@ -69,8 +69,11 @@ class Task extends Component {
           // console.log("enter");
           e.preventDefault();
           e.stopImmediatePropagation();
-          //TODO: Check if child
           addTaskToView(order + 1);
+          //TODO: Check if child
+          if (task.parent) {
+            childTask(order + 1);
+          }
           break;
         case 38:
           //up
