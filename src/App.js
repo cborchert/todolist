@@ -11,7 +11,7 @@ class App extends Component {
     super(props);
     this.v = "v0.0.1";
     //Debugging :)
-    // localStorage.clear();
+    localStorage.clear();
     const localTasks = localStorage.getItem("tasks" + this.v);
     const lastSeen = localStorage.getItem("lastSeen" + this.v);
     const appName = localStorage.getItem("appName" + this.v);
@@ -28,18 +28,19 @@ class App extends Component {
               filterString: "",
               tasks: [],
               permanent: true
+            },
+            {
+              title: "#a",
+              id: 1,
+              tag: "",
+              filterString: "#a",
+              tasks: [],
+              permanent: true
             }
-            // {
-            //   title: "#a",
-            //   id: 1,
-            //   tag: "",
-            //   filterString: "#a",
-            //   tasks: [],
-            //   permanent: true
-            // }
           ],
       appName: appName ? appName : "to do (click to edit)",
-      lastSeen
+      lastSeen,
+      activeViewId: 1
     };
 
     this.cacheInterval = null;
@@ -177,7 +178,7 @@ class App extends Component {
         },
         {
           id: 2,
-          title: "click this text and hit enter to add a task beneath it",
+          title: "#a click this text and hit enter to add a task beneath it",
           order: 2
         },
         {
@@ -422,6 +423,40 @@ class App extends Component {
 
   render() {
     const { views } = this.state;
+    // const renderedViews = !views
+    //   ? ""
+    //   : views.map((view, i) => {
+    //       let tasks = this.getViewTasks(view);
+    //       // let tasks = this.state.tasks;
+    //       return (
+    //         <View
+    //           key={"view-" + i}
+    //           view={view}
+    //           tasks={tasks}
+    //           updateView={this.updateView.bind(this)}
+    //           removeTask={this.removeTask.bind(this)}
+    //           updateTask={this.updateTask.bind(this)}
+    //           addTask={this.addTask.bind(this)}
+    //           setTaskAsChild={this.setTaskAsChild.bind(this)}
+    //           unsetTaskAsChild={this.unsetTaskAsChild.bind(this)}
+    //         />
+    //       );
+    //     });
+    const view = views.filter(view => view.id === this.state.activeViewId)[0];
+    const renderedView = !view ? (
+      ""
+    ) : (
+      <View
+        view={view}
+        tasks={this.getViewTasks(view)}
+        updateView={this.updateView.bind(this)}
+        removeTask={this.removeTask.bind(this)}
+        updateTask={this.updateTask.bind(this)}
+        addTask={this.addTask.bind(this)}
+        setTaskAsChild={this.setTaskAsChild.bind(this)}
+        unsetTaskAsChild={this.unsetTaskAsChild.bind(this)}
+      />
+    );
     return (
       <div className="app">
         <input
@@ -431,25 +466,7 @@ class App extends Component {
             this.updateStateWithValue("appName", e.target.value);
           }}
         />
-        {!views
-          ? ""
-          : views.map((view, i) => {
-              let tasks = this.getViewTasks(view);
-              // let tasks = this.state.tasks;
-              return (
-                <View
-                  key={"view-" + i}
-                  view={view}
-                  tasks={tasks}
-                  updateView={this.updateView.bind(this)}
-                  removeTask={this.removeTask.bind(this)}
-                  updateTask={this.updateTask.bind(this)}
-                  addTask={this.addTask.bind(this)}
-                  setTaskAsChild={this.setTaskAsChild.bind(this)}
-                  unsetTaskAsChild={this.unsetTaskAsChild.bind(this)}
-                />
-              );
-            })}
+        {renderedView}
         <div className="app__help">
           <h5 className="app__help-title">shortcuts</h5>
           <ul>
