@@ -59,7 +59,10 @@ class AddViewModal extends Component {
         <h3 className="app-view-modal__header">add new view</h3>
         <div className="app-view-modal__body">
           <div className="app-view-modal__input-container">
-            <label className="app-view-modal__input-label" for="new-view-name">
+            <label
+              className="app-view-modal__input-label"
+              htmlFor="new-view-name"
+            >
               view name
             </label>
             <input
@@ -77,7 +80,7 @@ class AddViewModal extends Component {
           <div className="app-view-modal__input-container">
             <label
               className="app-view-modal__input-label"
-              for="new-view-filter"
+              htmlFor="new-view-filter"
             >
               view filter
             </label>

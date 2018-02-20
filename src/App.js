@@ -12,10 +12,11 @@ class App extends Component {
     super(props);
     this.v = "v0.0.1";
     //Debugging :)
-    localStorage.clear();
+    // localStorage.clear();
     const localTasks = localStorage.getItem("tasks" + this.v);
     const lastSeen = localStorage.getItem("lastSeen" + this.v);
     const appName = localStorage.getItem("appName" + this.v);
+    const activeViewId = localStorage.getItem("activeViewId" + this.v);
     const views = localStorage.getItem("views" + this.v);
     this.state = {
       tasks: localTasks ? JSON.parse(localTasks) : [],
@@ -23,33 +24,17 @@ class App extends Component {
         ? JSON.parse(views)
         : [
             {
-              title: "all tasks",
+              title: "all tasks... name me whatever you want",
               id: -1,
               tag: "",
               filterString: "",
               tasks: [],
               permanent: true
-            },
-            {
-              title: "#a",
-              id: 1,
-              tag: "",
-              filterString: "#a",
-              tasks: [],
-              permanent: false
-            },
-            {
-              title: "#b",
-              id: 2,
-              tag: "",
-              filterString: "#b",
-              tasks: [],
-              permanent: false
             }
           ],
-      appName: appName ? appName : "to do (click to edit)",
+      appName: appName ? appName : "your amazing to do list (edit)",
       lastSeen,
-      activeViewId: 1,
+      activeViewId: views ? activeViewId : -1,
       addViewModalOpen: false
     };
 
@@ -60,6 +45,7 @@ class App extends Component {
     localStorage.setItem("tasks" + this.v, JSON.stringify(this.state.tasks));
     localStorage.setItem("lastSeen" + this.v, Date.now());
     localStorage.setItem("appName" + this.v, this.state.appName);
+    localStorage.setItem("activeViewId" + this.v, this.state.activeViewId);
     localStorage.setItem("views" + this.v, JSON.stringify(this.state.views));
   }
 
@@ -191,7 +177,7 @@ class App extends Component {
         },
         {
           id: 2,
-          title: "#a click this text and hit enter to add a task beneath it",
+          title: "click this text and hit enter to add a task beneath it",
           order: 2
         },
         {
@@ -210,6 +196,7 @@ class App extends Component {
           title: "mark your progress by clicking the checkbox to the left",
           order: 5
         },
+
         {
           id: 6,
           title:
@@ -218,9 +205,27 @@ class App extends Component {
         },
         {
           id: 7,
+          title: "p.s. try using the keyboard shortcuts listed below!!",
+          order: 7,
+          children: [8, 9]
+        },
+        {
+          id: 8,
+          title: "(e.g. shift up/down to move this todo)",
+          order: 8,
+          parent: 7
+        },
+        {
+          id: 9,
+          title: "(or shift+tab to unindent this task or tab to reindent it)",
+          order: 9,
+          parent: 7
+        },
+        {
+          id: 10,
           title:
-            "p.s. try using the shorcuts listed below... try tab, shift + up, etc!!",
-          order: 7
+            "p.p.s. organize today's todos by adding a new view with the filter #today !! (look up and right)",
+          order: 10
         }
       ];
       this.addTasks(tasks, this.reconcileViews.bind(this));
@@ -393,13 +398,18 @@ class App extends Component {
   }
 
   reconcileActiveView() {
+    //check if there is a view with the activeViewId, if not, assign it to the first view
+    let activeViewId = this.state.activeViewId;
+    if (
+      this.state.views.filter(view => view.id === activeViewId).length === 0
+    ) {
+      activeViewId = this.state.views[0].id;
+    }
     this.setState({
       ...this.state,
       views: this.state.views.map(
         view =>
-          view.id === this.state.activeViewId
-            ? { ...this.reconcileViewTasks(view) }
-            : view
+          view.id === activeViewId ? { ...this.reconcileViewTasks(view) } : view
       )
     });
   }
@@ -517,17 +527,23 @@ class App extends Component {
       permanent: false
     };
     const viewToAdd = { ...defaultView, ...view };
-    this.setState({
-      ...this.state,
-      views: [...this.state.views, viewToAdd],
-      addViewModalOpen: false,
-      activeViewId: toggleToView ? viewToAdd.id : this.state.activeViewId
-    });
+    this.setState(
+      {
+        ...this.state,
+        views: [...this.state.views, viewToAdd],
+        addViewModalOpen: false,
+        activeViewId: toggleToView ? viewToAdd.id : this.state.activeViewId
+      },
+      this.reconcileViews
+    );
   }
 
   render() {
-    const { views, addViewModalOpen } = this.state;
-    const view = views.filter(view => view.id === this.state.activeViewId)[0];
+    const { views, addViewModalOpen, activeViewId } = this.state;
+    let view = views.filter(view => view.id === activeViewId)[0];
+    if (!view && views && views.length > 0) {
+      view = views[0];
+    }
     const renderedView = !view ? (
       ""
     ) : (
@@ -564,11 +580,15 @@ class App extends Component {
           />
           {renderedView}
           <div className="app__view-options">
-            <div className="app__toggle-active-view">
-              <button onClick={this.toggleActiveView.bind(this)}>
-                switch view
-              </button>
-            </div>
+            {views.length > 1 ? (
+              <div className="app__toggle-active-view">
+                <button onClick={this.toggleActiveView.bind(this)}>
+                  switch view
+                </button>
+              </div>
+            ) : (
+              ""
+            )}
             <div className="app__add-newView">
               <button onClick={this.toggleAddViewModal.bind(this)}>
                 add view
@@ -609,7 +629,7 @@ class App extends Component {
             </ul>
           </div>
         </div>
-        <div class="app__modals">{addViewModal}</div>
+        <div className="app__modals">{addViewModal}</div>
       </div>
     );
   }
