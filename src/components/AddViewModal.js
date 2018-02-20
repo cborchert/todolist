@@ -49,45 +49,72 @@ class AddViewModal extends Component {
     const { nameOk, filterOk } = this.state;
     const formValid = nameOk && filterOk;
     return (
-      <div>
-        <div>This is the modal</div>
-        <div>
-          <input
-            className={nameOk ? "" : "error"}
-            ref={input => {
-              this.name = input;
-            }}
-            placeholder="view title"
-            onChange={this.verifyForm.bind(this)}
-          />
-        </div>
-        <div>
-          <input
-            className={filterOk ? "" : "error"}
-            ref={input => {
-              this.filter = input;
-            }}
-            placeholder="view filter"
-            onChange={this.verifyForm.bind(this)}
-          />
-        </div>
-        {formValid ? (
-          ""
-        ) : (
-          <div>
-            {nameOk ? "" : <p>You must include a title</p>}
-            {filterOk ? (
-              ""
-            ) : (
-              <p>
-                You must include at least one filter, and filters must begin
-                with a #
-              </p>
-            )}
+      <div className="app-view-modal">
+        <button
+          className="app-view-modal__close"
+          onClick={this.props.closeModal}
+        >
+          x
+        </button>
+        <h3 className="app-view-modal__header">add new view</h3>
+        <div className="app-view-modal__body">
+          <div className="app-view-modal__input-container">
+            <label className="app-view-modal__input-label" for="new-view-name">
+              view name
+            </label>
+            <input
+              className={
+                nameOk ? "app-view-modal__input" : "app-view-modal__input error"
+              }
+              ref={input => {
+                this.name = input;
+              }}
+              name="new-view-name"
+              placeholder="view title"
+              onChange={this.verifyForm.bind(this)}
+            />
           </div>
-        )}
-
+          <div className="app-view-modal__input-container">
+            <label
+              className="app-view-modal__input-label"
+              for="new-view-filter"
+            >
+              view filter
+            </label>
+            <input
+              className={
+                filterOk
+                  ? "app-view-modal__input"
+                  : "app-view-modal__input error"
+              }
+              ref={input => {
+                this.filter = input;
+              }}
+              name="new-view-filter"
+              placeholder="view filter"
+              onChange={this.verifyForm.bind(this)}
+            />
+          </div>
+        </div>
         <div>
+          {formValid ? (
+            ""
+          ) : (
+            <div className="app-view-modal__errors">
+              {nameOk ? "" : <p>You must include a title</p>}
+              {filterOk ? (
+                ""
+              ) : (
+                <p>
+                  You must include at least one filter, and filters must begin
+                  with a #
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="app-view-modal__footer">
           <button
             type="button"
             onClick={this.onSubmit.bind(this)}

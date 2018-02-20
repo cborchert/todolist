@@ -500,6 +500,13 @@ class App extends Component {
     });
   }
 
+  closeAddViewModal() {
+    this.setState({
+      ...this.state,
+      addViewModalOpen: false
+    });
+  }
+
   addView(view, toggleToView = true) {
     const defaultView = {
       title: "",
@@ -514,7 +521,7 @@ class App extends Component {
       ...this.state,
       views: [...this.state.views, viewToAdd],
       addViewModalOpen: false,
-      activeViewId :  toggleToView ? viewToAdd.id : this.state.activeViewId
+      activeViewId: toggleToView ? viewToAdd.id : this.state.activeViewId
     });
   }
 
@@ -538,60 +545,71 @@ class App extends Component {
     const addViewModal = !addViewModalOpen ? (
       ""
     ) : (
-      <AddViewModal addView={this.addView.bind(this)} />
+      <AddViewModal
+        addView={this.addView.bind(this)}
+        closeModal={this.closeAddViewModal.bind(this)}
+      />
     );
+    const modalOpen = addViewModalOpen;
+    const appClasses = ["app", modalOpen ? "app--modal-open" : ""].join(" ");
     return (
-      <div className="app">
-        <input
-          className="app__title"
-          value={this.state.appName}
-          onChange={e => {
-            this.updateStateWithValue("appName", e.target.value);
-          }}
-        />
-        {renderedView}
-        <div className="app__toggle-active-view">
-          <button onClick={this.toggleActiveView.bind(this)}>
-            Toggle active view
-          </button>
-        </div>
-        <div className="app__toggle-active-view">
-          <button onClick={this.toggleAddViewModal.bind(this)}>Add View</button>
-        </div>
-        {addViewModal}
+      <div className={appClasses}>
+        <div className="app__inner">
+          <input
+            className="app__title"
+            value={this.state.appName}
+            onChange={e => {
+              this.updateStateWithValue("appName", e.target.value);
+            }}
+          />
+          {renderedView}
+          <div className="app__view-options">
+            <div className="app__toggle-active-view">
+              <button onClick={this.toggleActiveView.bind(this)}>
+                switch view
+              </button>
+            </div>
+            <div className="app__add-newView">
+              <button onClick={this.toggleAddViewModal.bind(this)}>
+                add view
+              </button>
+            </div>
+          </div>
 
-        <div className="app__help">
-          <h5 className="app__help-title">shortcuts</h5>
-          <ul>
-            <li>
-              <b>up</b> / <b>down</b> keys: navigate between tasks
-            </li>
-            <li>
-              <b>enter</b>: new task after this task
-            </li>
-            {/* <li>
+          <div className="app__help">
+            <h5 className="app__help-title">shortcuts</h5>
+            <ul>
+              <li>
+                <b>up</b> / <b>down</b> keys: navigate between tasks
+              </li>
+              <li>
+                <b>enter</b>: new task after this task
+              </li>
+              {/* <li>
               <b>shift + enter</b>: new task before this task
             </li> */}
-            <li>
-              <b>ctrl/⌘ + shift + delete/backspace</b>: delete task
-            </li>
-            <li>
-              <b>delete/backspace</b> on empty task: delete task
-            </li>
-            <li>
-              <b>tab</b>: indent task
-            </li>
-            <li>
-              <b>shift + tab</b>: unindent task
-            </li>
-            <li>
-              <b>shift + up</b>: move task up list
-            </li>
-            <li>
-              <b>shift + down</b>: move task down list
-            </li>
-          </ul>
+              <li>
+                <b>ctrl/⌘ + shift + delete/backspace</b>: delete task
+              </li>
+              <li>
+                <b>delete/backspace</b> on empty task: delete task
+              </li>
+              <li>
+                <b>tab</b>: indent task
+              </li>
+              <li>
+                <b>shift + tab</b>: unindent task
+              </li>
+              <li>
+                <b>shift + up</b>: move task up list
+              </li>
+              <li>
+                <b>shift + down</b>: move task down list
+              </li>
+            </ul>
+          </div>
         </div>
+        <div class="app__modals">{addViewModal}</div>
       </div>
     );
   }

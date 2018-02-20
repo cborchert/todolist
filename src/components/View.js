@@ -307,7 +307,7 @@ class View extends Component {
           className="view__add-task-button"
           onClick={this.handleAddTaskButtonClick.bind(this)}
         >
-          Add Task
+          add task
         </button>
       </div>
     );
