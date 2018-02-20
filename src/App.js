@@ -237,14 +237,16 @@ class App extends Component {
     );
   }
 
-  updateView(viewId, viewValues) {
-    const { views } = this.state;
-    const index = findIndex(views, v => v.id === viewId);
-    const view = { ...views[index], ...viewValues };
-    this.setState({
-      ...this.state,
-      views: [...views.slice(0, index), view, ...views.slice(index + 1)]
-    });
+  updateView(viewId, viewValues, callback = () => {}) {
+    this.setState(
+      {
+        ...this.state,
+        views: this.state.views.map(
+          view => (view.id === viewId ? { ...view, ...viewValues } : view)
+        )
+      },
+      callback
+    );
   }
 
   updateTask(taskId, taskValues) {
@@ -435,7 +437,6 @@ class App extends Component {
     });
     const nextIndex =
       currentIndex + 1 >= this.state.views.length ? 0 : currentIndex + 1;
-    console.log(currentIndex, nextIndex);
     const activeViewId = this.state.views[nextIndex].id;
 
     this.setState({

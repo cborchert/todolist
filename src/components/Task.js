@@ -220,7 +220,6 @@ class Task extends Component {
         : "task--input-inactive",
       isChild ? "task--is-child" : ""
     ];
-    //console.log(taskClasses);
     const timeValue = formatTime(task.totalTime + timerTime);
     return (
       <div className={taskClasses.join(" ")}>

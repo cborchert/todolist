@@ -39,9 +39,10 @@ class View extends Component {
       task.id,
       ...view.tasks.slice(order)
     ];
-    updateView(this.props.view.id, { tasks: tasklist });
-    addTask(task);
-    this.setFocus(task.id);
+    updateView(this.props.view.id, { tasks: tasklist }, () => {
+      addTask(task);
+      this.setFocus(task.id);
+    });
   }
 
   setFocus(id) {
