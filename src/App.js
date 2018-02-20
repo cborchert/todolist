@@ -102,11 +102,11 @@ class App extends Component {
         ...this.state,
         tasks
       },
-      this.reconcileViews
+      this.reconcileActiveView
     );
   }
 
-  addTasks(newTasks) {
+  addTasks(newTasks, callback = () => {}) {
     if (newTasks.length === 0) {
       return;
     }
@@ -122,7 +122,10 @@ class App extends Component {
         ...this.state,
         tasks
       },
-      this.reconcileViews
+      () => {
+        this.reconcileActiveView();
+        callback();
+      }
     );
   }
 
@@ -139,7 +142,7 @@ class App extends Component {
               : []
           }))
       },
-      this.reconcileViews
+      this.reconcileActiveView
     );
   }
 
@@ -218,7 +221,7 @@ class App extends Component {
           order: 7
         }
       ];
-      this.addTasks(tasks);
+      this.addTasks(tasks, this.reconcileViews.bind(this));
     }
     this.cacheInterval = setInterval(this.cacheLocally.bind(this), 1000);
   }
@@ -233,7 +236,7 @@ class App extends Component {
         ...this.state,
         [key]: value
       },
-      this.reconcileViews
+      this.reconcileActiveView
     );
   }
 
@@ -257,7 +260,7 @@ class App extends Component {
           t => (t.id !== taskId ? t : { ...t, ...taskValues })
         )
       },
-      this.reconcileViews
+      this.reconcileActiveView
     );
   }
 
@@ -275,7 +278,7 @@ class App extends Component {
           return task;
         })
       },
-      this.reconcileViews
+      this.reconcileActiveView
     );
   }
 
@@ -297,7 +300,9 @@ class App extends Component {
     });
   }
 
+  //TODO: Technically, we only need the id's out of this match
   applyTagFilter(tasks, filterString) {
+    // console.log("applying filters");
     if (!filterString) {
       return tasks;
     }
@@ -331,6 +336,8 @@ class App extends Component {
             //if the next character isn't the end of the string, a space, or another hashtag, it doesn't work
             if (typeof char === "undefined" || char === " " || char === "#") {
               matchesFilter = matchesFilter && true;
+            } else {
+              matchesFilter = false;
             }
           } else {
             //no match
@@ -343,7 +350,31 @@ class App extends Component {
       });
       return includeTask;
     });
-    return filteredTasks;
+
+    //Add parents of child tasks
+    let filteredTasksParentsOnly = [];
+    filteredTasks.forEach(task => {
+      if (task.parent) {
+        //check whether the parent is in the list already
+        // console.log("task is a child!", task);
+        if (
+          filteredTasksParentsOnly.filter(t => t.id === task.parent).length <= 0
+        ) {
+          //if not, add the parent to the list
+          const parent = tasks.filter(t => t.id === task.parent)[0];
+          if (parent) {
+            filteredTasksParentsOnly.push(parent);
+          }
+        }
+      } else {
+        // console.log("task is a parent");
+        //if it's not a child, go ahead and leave it in the list
+        filteredTasksParentsOnly.push(task);
+      }
+    });
+
+    // console.log(filterString, filteredTasksParentsOnly);
+    return filteredTasksParentsOnly;
   }
 
   reconcileViews() {
@@ -356,6 +387,18 @@ class App extends Component {
     this.setState({
       ...this.state,
       views
+    });
+  }
+
+  reconcileActiveView() {
+    this.setState({
+      ...this.state,
+      views: this.state.views.map(
+        view =>
+          view.id === this.state.activeViewId
+            ? { ...this.reconcileViewTasks(view) }
+            : view
+      )
     });
   }
 
@@ -439,10 +482,13 @@ class App extends Component {
       currentIndex + 1 >= this.state.views.length ? 0 : currentIndex + 1;
     const activeViewId = this.state.views[nextIndex].id;
 
-    this.setState({
-      ...this.state,
-      activeViewId
-    });
+    this.setState(
+      {
+        ...this.state,
+        activeViewId
+      },
+      this.reconcileActiveView
+    );
   }
 
   render() {
