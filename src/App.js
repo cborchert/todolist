@@ -4,6 +4,7 @@ import "./App.scss";
 
 import Tasklist from "./components/Tasklist";
 import View from "./components/View";
+import AddViewModal from "./components/AddViewModal";
 import { orderTasks } from "./utilities/TaskOperations";
 
 class App extends Component {
@@ -48,7 +49,8 @@ class App extends Component {
           ],
       appName: appName ? appName : "to do (click to edit)",
       lastSeen,
-      activeViewId: 1
+      activeViewId: 1,
+      addViewModalOpen: false
     };
 
     this.cacheInterval = null;
@@ -491,8 +493,19 @@ class App extends Component {
     );
   }
 
+  toggleAddViewModal() {
+    this.setState({
+      ...this.state,
+      addViewModalOpen: !this.state.addViewModalOpen
+    });
+  }
+
+  addView(view) {
+    console.log(view);
+  }
+
   render() {
-    const { views } = this.state;
+    const { views, addViewModalOpen } = this.state;
     const view = views.filter(view => view.id === this.state.activeViewId)[0];
     const renderedView = !view ? (
       ""
@@ -507,6 +520,11 @@ class App extends Component {
         setTaskAsChild={this.setTaskAsChild.bind(this)}
         unsetTaskAsChild={this.unsetTaskAsChild.bind(this)}
       />
+    );
+    const addViewModal = !addViewModalOpen ? (
+      ""
+    ) : (
+      <AddViewModal addView={this.addView.bind(this)} />
     );
     return (
       <div className="app">
@@ -523,6 +541,11 @@ class App extends Component {
             Toggle active view
           </button>
         </div>
+        <div className="app__toggle-active-view">
+          <button onClick={this.toggleAddViewModal.bind(this)}>Add View</button>
+        </div>
+        {addViewModal}
+
         <div className="app__help">
           <h5 className="app__help-title">shortcuts</h5>
           <ul>

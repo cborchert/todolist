@@ -35,6 +35,10 @@ input {
   &:active, &:focus {
     border-bottom: 4px solid $blue;
   }
+  &.error {
+    color: $red;
+    border-bottom-color: $red;
+  }
 }
 
 button {
