@@ -1,6 +1,7 @@
 @import "../vars.scss";
 .view {
     width: 100%;
+    box-sizing: border-box;
     max-width: 1200px;
     padding: 0 20px;
 
@@ -14,7 +15,10 @@
         font-size: 1.25rem;
         font-weight: bold;
         color: $black;
-        width: calc(100% - 170px);
+        width: 100%;
+    }
+    &__subheader {
+        padding: 0 10px;
     }
     &__tasks {
         padding: 0 5px 20px ;
@@ -22,11 +26,17 @@
     &__add-task-button {
 
     }
+    &__default-filter {
+        font-size: 0.75rem;
+        // font-style: italic;
+        color: lighten($black, 30%);
+        color: $black;
+    }
     &__time-tracked {
         float: right;
         font-style: italic;
         font-weight: normal;
-        line-height: 3rem;
-        padding-right: 10px;
+        // line-height: 3rem;
+        // padding-right: 10px;
     }
 }

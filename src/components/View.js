@@ -289,10 +289,19 @@ class View extends Component {
               updateView(view.id, { title: e.target.value });
             }}
           />
-          <span className="view__time-tracked">
-            {formatTime(this.state.totalTime)} tracked
-          </span>
+
+          <div className="view__subheader">
+            <span className="view__default-filter">
+              automatically tracks{view.filterString === ""
+                ? " all tasks"
+                : ` tasks marked ${view.filterString}`}
+            </span>
+            <span className="view__time-tracked">
+              {formatTime(this.state.totalTime)} tracked
+            </span>
+          </div>
         </div>
+
         <div className="view__tasks">{renderedTasks}</div>
         <button
           className="view__add-task-button"

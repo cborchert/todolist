@@ -35,13 +35,25 @@ class AddViewModal extends Component {
     return isOkay;
   }
 
+  onSubmit() {
+    const { nameOk, filterOk } = this.state;
+    if (nameOk && filterOk) {
+      this.props.addView({
+        title: this.name.value,
+        filterString: this.filter.value
+      });
+    }
+  }
+
   render() {
+    const { nameOk, filterOk } = this.state;
+    const formValid = nameOk && filterOk;
     return (
       <div>
         <div>This is the modal</div>
         <div>
           <input
-            className={this.state.nameOk ? "" : "error"}
+            className={nameOk ? "" : "error"}
             ref={input => {
               this.name = input;
             }}
@@ -51,7 +63,7 @@ class AddViewModal extends Component {
         </div>
         <div>
           <input
-            className={this.state.filterOk ? "" : "error"}
+            className={filterOk ? "" : "error"}
             ref={input => {
               this.filter = input;
             }}
@@ -59,19 +71,30 @@ class AddViewModal extends Component {
             onChange={this.verifyForm.bind(this)}
           />
         </div>
+        {formValid ? (
+          ""
+        ) : (
+          <div>
+            {nameOk ? "" : <p>You must include a title</p>}
+            {filterOk ? (
+              ""
+            ) : (
+              <p>
+                You must include at least one filter, and filters must begin
+                with a #
+              </p>
+            )}
+          </div>
+        )}
+
         <div>
-          {this.state.nameOk ? "" : <p>You must include a title</p>}
-          {this.state.filterOk ? (
-            ""
-          ) : (
-            <p>
-              You must include at least one filter, and filters must begin with
-              a #
-            </p>
-          )}
-        </div>
-        <div>
-          <button onClick={this.verifyForm.bind(this)}>Create View</button>
+          <button
+            type="button"
+            onClick={this.onSubmit.bind(this)}
+            disabled={!formValid}
+          >
+            Create View
+          </button>
         </div>
       </div>
     );

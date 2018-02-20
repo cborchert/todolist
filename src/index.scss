@@ -48,4 +48,11 @@ button {
   &:hover {
     border-bottom-color: darken($gray, 5%);
   }
+  &.disabled, &:disabled {
+    opacity: 0.5;
+    cursor: default;
+    &:hover {
+      border-bottom-color: $gray;
+    }
+  }
 }

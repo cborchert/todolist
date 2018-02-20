@@ -36,7 +36,7 @@ class App extends Component {
               tag: "",
               filterString: "#a",
               tasks: [],
-              permanent: true
+              permanent: false
             },
             {
               title: "#b",
@@ -44,7 +44,7 @@ class App extends Component {
               tag: "",
               filterString: "#b",
               tasks: [],
-              permanent: true
+              permanent: false
             }
           ],
       appName: appName ? appName : "to do (click to edit)",
@@ -500,8 +500,22 @@ class App extends Component {
     });
   }
 
-  addView(view) {
-    console.log(view);
+  addView(view, toggleToView = true) {
+    const defaultView = {
+      title: "",
+      id: Date.now(),
+      tag: "",
+      filterString: "",
+      tasks: [],
+      permanent: false
+    };
+    const viewToAdd = { ...defaultView, ...view };
+    this.setState({
+      ...this.state,
+      views: [...this.state.views, viewToAdd],
+      addViewModalOpen: false,
+      activeViewId :  toggleToView ? viewToAdd.id : this.state.activeViewId
+    });
   }
 
   render() {
