@@ -36,6 +36,14 @@ class App extends Component {
               filterString: "#a",
               tasks: [],
               permanent: true
+            },
+            {
+              title: "#b",
+              id: 2,
+              tag: "",
+              filterString: "#b",
+              tasks: [],
+              permanent: true
             }
           ],
       appName: appName ? appName : "to do (click to edit)",
@@ -421,27 +429,23 @@ class App extends Component {
     return tasks;
   }
 
+  toggleActiveView() {
+    const currentIndex = findIndex(this.state.views, {
+      id: this.state.activeViewId
+    });
+    const nextIndex =
+      currentIndex + 1 >= this.state.views.length ? 0 : currentIndex + 1;
+    console.log(currentIndex, nextIndex);
+    const activeViewId = this.state.views[nextIndex].id;
+
+    this.setState({
+      ...this.state,
+      activeViewId
+    });
+  }
+
   render() {
     const { views } = this.state;
-    // const renderedViews = !views
-    //   ? ""
-    //   : views.map((view, i) => {
-    //       let tasks = this.getViewTasks(view);
-    //       // let tasks = this.state.tasks;
-    //       return (
-    //         <View
-    //           key={"view-" + i}
-    //           view={view}
-    //           tasks={tasks}
-    //           updateView={this.updateView.bind(this)}
-    //           removeTask={this.removeTask.bind(this)}
-    //           updateTask={this.updateTask.bind(this)}
-    //           addTask={this.addTask.bind(this)}
-    //           setTaskAsChild={this.setTaskAsChild.bind(this)}
-    //           unsetTaskAsChild={this.unsetTaskAsChild.bind(this)}
-    //         />
-    //       );
-    //     });
     const view = views.filter(view => view.id === this.state.activeViewId)[0];
     const renderedView = !view ? (
       ""
@@ -467,6 +471,11 @@ class App extends Component {
           }}
         />
         {renderedView}
+        <div className="app__toggle-active-view">
+          <button onClick={this.toggleActiveView.bind(this)}>
+            Toggle active view
+          </button>
+        </div>
         <div className="app__help">
           <h5 className="app__help-title">shortcuts</h5>
           <ul>
