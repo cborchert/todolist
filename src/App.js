@@ -12,11 +12,12 @@ class App extends Component {
     super(props);
     this.v = "v0.0.1";
     //Debugging :)
-    localStorage.clear();
+    // localStorage.clear();
     const localTasks = localStorage.getItem("tasks" + this.v);
     const lastSeen = localStorage.getItem("lastSeen" + this.v);
     const appName = localStorage.getItem("appName" + this.v);
     const activeViewId = localStorage.getItem("activeViewId" + this.v);
+    console.log(activeViewId);
     const views = localStorage.getItem("views" + this.v);
     this.state = {
       tasks: localTasks ? JSON.parse(localTasks) : [],
@@ -118,7 +119,7 @@ class App extends Component {
   }
 
   removeTask(taskId, removeChildren = true) {
-    console.log("removeChildren", removeChildren);
+    // console.log("removeChildren", removeChildren);
     //if removeChildren === false, we need to unparent the children
     this.setState(
       {
@@ -498,13 +499,20 @@ class App extends Component {
     return tasks;
   }
 
-  toggleActiveView() {
+  toggleActiveView(dir = 1) {
     const currentIndex = findIndex(this.state.views, {
-      id: this.state.activeViewId
+      id: parseInt(this.state.activeViewId)
     });
-    const nextIndex =
-      currentIndex + 1 >= this.state.views.length ? 0 : currentIndex + 1;
-    const activeViewId = this.state.views[nextIndex].id;
+    let nextIndex = currentIndex + dir;
+    if (nextIndex >= this.state.views.length) {
+      nextIndex = 0;
+    }
+    if (nextIndex < 0) {
+      nextIndex = this.state.views.length - 1;
+    }
+    const activeViewId = this.state.views[nextIndex]
+      ? this.state.views[nextIndex].id
+      : this.state.views[0].id;
 
     this.setState(
       {
@@ -552,7 +560,7 @@ class App extends Component {
 
   render() {
     const { views, addViewModalOpen, activeViewId } = this.state;
-    let view = views.filter(view => view.id === activeViewId)[0];
+    let view = views.filter(view => view.id === parseInt(activeViewId))[0];
     if (!view && views && views.length > 0) {
       view = views[0];
     }
@@ -580,6 +588,57 @@ class App extends Component {
     );
     const modalOpen = addViewModalOpen;
     const appClasses = ["app", modalOpen ? "app--modal-open" : ""].join(" ");
+
+    const nextView =
+      views.length > 1 ? (
+        <button
+          className="app__next-view"
+          onClick={() => {
+            this.toggleActiveView();
+          }}
+        >
+          &gt;
+        </button>
+      ) : (
+        ""
+      );
+    const prevView =
+      views.length > 1 ? (
+        <button
+          className="app__prev-view"
+          onClick={() => {
+            this.toggleActiveView(-1);
+          }}
+        >
+          &lt;
+        </button>
+      ) : (
+        ""
+      );
+    const newView = (
+      <button
+        className="app__add-newView"
+        onClick={() => {
+          this.toggleAddViewModal();
+        }}
+      >
+        add view
+      </button>
+    );
+    const toggleView =
+      views.length > 1 ? (
+        <button
+          className="app__toggle-active-view"
+          onClick={() => {
+            this.toggleActiveView();
+          }}
+        >
+          switch view
+        </button>
+      ) : (
+        ""
+      );
+
     return (
       <div className={appClasses}>
         <div className="app__inner">
@@ -591,21 +650,11 @@ class App extends Component {
             }}
           />
           {renderedView}
-          <div className="app__view-options">
-            {views.length > 1 ? (
-              <div className="app__toggle-active-view">
-                <button onClick={this.toggleActiveView.bind(this)}>
-                  switch view
-                </button>
-              </div>
-            ) : (
-              ""
-            )}
-            <div className="app__add-newView">
-              <button onClick={this.toggleAddViewModal.bind(this)}>
-                add view
-              </button>
-            </div>
+          <div className="app__options">
+            {prevView}
+            {newView}
+            {toggleView}
+            {nextView}
           </div>
 
           <div className="app__help">

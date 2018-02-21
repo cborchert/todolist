@@ -116,38 +116,55 @@ class View extends Component {
         }
       });
     } else {
-      //if it's a parent
+      //if it's a parent or a normal task
 
-      //Make sure that the place it's moving into isn't childed
       let direction = newOrder - order > 0 ? 1 : -1;
+      //if it's moving down and has children, it should move at least the length of it's children
       if (task.children && direction === 1) {
         newOrder += task.children.length;
       }
+
+      //Make sure that the place it's moving into isn't childed
       let canMove = false;
       let didSkip = false;
+      //find the next place that is not someone else's child
+      //and set newOrder to that
       while (!canMove) {
         canMove = true;
-        let nextOrder = newOrder + 1;
-        if (nextOrder > high) {
-          nextOrder = low;
-        }
-        if (nextOrder < low) {
-          nextOrder = high;
-        }
+        //check if newOrder is a child
+        //if so, move one more in that direction
         let replacedTask = this.props.tasks[newOrder];
-        let afterReplacedTask = this.props.tasks[nextOrder];
-        if (
-          (afterReplacedTask && afterReplacedTask.parent) ||
-          (replacedTask && replacedTask.parent)
-        ) {
-          newOrder = newOrder + direction;
+
+        console.log("canMove? replacedTask parent", replacedTask);
+        if (replacedTask && replacedTask.parent) {
           canMove = false;
-          didSkip = true;
+          newOrder = newOrder + direction;
         }
+
+        // let nextOrder = newOrder + 1;
+        // if (nextOrder > high) {
+        //   nextOrder = low;
+        // }
+        // if (nextOrder < low) {
+        //   nextOrder = high;
+        // }
+        // let replacedTask = this.props.tasks[newOrder];
+        // let afterReplacedTask = this.props.tasks[nextOrder];
+        // //the next task or the one after it is a child
+        // if (
+        //   //comment this out allows us to move down correctly
+        //   (afterReplacedTask && afterReplacedTask.parent) ||
+        //   //commenting this out allows us to move down correctly
+        //   (replacedTask && replacedTask.parent)
+        // ) {
+        //   newOrder = newOrder + direction;
+        //   canMove = false;
+        //   didSkip = true;
+        // }
       }
-      if (didSkip) {
-        newOrder = newOrder - direction;
-      }
+      // if (didSkip) {
+      //   // newOrder = newOrder - direction;
+      // }
     }
 
     if (newOrder < low) {
