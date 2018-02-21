@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./AddViewModal.scss";
+import "./AppModal.scss";
 
 class AddViewModal extends Component {
   constructor(props) {
@@ -49,26 +49,21 @@ class AddViewModal extends Component {
     const { nameOk, filterOk } = this.state;
     const formValid = nameOk && filterOk;
     return (
-      <div className="app-view-modal">
+      <div className="app-modal app-modal">
         <button
-          className="app-view-modal__close"
+          className="app-modal__close app-modal__close"
           onClick={this.props.closeModal}
         >
           x
         </button>
-        <h3 className="app-view-modal__header">add new view</h3>
-        <div className="app-view-modal__body">
-          <div className="app-view-modal__input-container">
-            <label
-              className="app-view-modal__input-label"
-              htmlFor="new-view-name"
-            >
+        <h3 className="app-modal__header app-modal__header">add new view</h3>
+        <div className="app-modal__body">
+          <div className="app-modal__input-container">
+            <label className="app-modal__input-label" htmlFor="new-view-name">
               view name
             </label>
             <input
-              className={
-                nameOk ? "app-view-modal__input" : "app-view-modal__input error"
-              }
+              className={nameOk ? "app-modal__input" : "app-modal__input error"}
               ref={input => {
                 this.name = input;
               }}
@@ -77,18 +72,13 @@ class AddViewModal extends Component {
               onChange={this.verifyForm.bind(this)}
             />
           </div>
-          <div className="app-view-modal__input-container">
-            <label
-              className="app-view-modal__input-label"
-              htmlFor="new-view-filter"
-            >
+          <div className="app-modal__input-container">
+            <label className="app-modal__input-label" htmlFor="new-view-filter">
               view filter
             </label>
             <input
               className={
-                filterOk
-                  ? "app-view-modal__input"
-                  : "app-view-modal__input error"
+                filterOk ? "app-modal__input" : "app-modal__input error"
               }
               ref={input => {
                 this.filter = input;
@@ -103,7 +93,7 @@ class AddViewModal extends Component {
           {formValid ? (
             ""
           ) : (
-            <div className="app-view-modal__errors">
+            <div className="app-modal__errors">
               {nameOk ? "" : <p>You must include a title</p>}
               {filterOk ? (
                 ""
@@ -117,7 +107,7 @@ class AddViewModal extends Component {
           )}
         </div>
 
-        <div className="app-view-modal__footer">
+        <div className="app-modal__footer">
           <button
             type="button"
             onClick={this.onSubmit.bind(this)}

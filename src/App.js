@@ -2,10 +2,9 @@ import React, { Component } from "react";
 import findIndex from "lodash/findIndex";
 import "./App.scss";
 
-import Tasklist from "./components/Tasklist";
 import View from "./components/View";
 import AddViewModal from "./components/AddViewModal";
-import { orderTasks } from "./utilities/TaskOperations";
+import ActiveViewModal from "./components/ActiveViewModal";
 
 class App extends Component {
   constructor(props) {
@@ -36,7 +35,8 @@ class App extends Component {
       appName: appName ? appName : "your amazing to do list (edit)",
       lastSeen,
       activeViewId: views ? activeViewId : -1,
-      addViewModalOpen: false
+      addViewModalOpen: false,
+      activeViewModalOpen: false
     };
 
     this.cacheInterval = null;
@@ -499,6 +499,17 @@ class App extends Component {
     return tasks;
   }
 
+  setActiveView(activeViewId) {
+    this.setState(
+      {
+        ...this.state,
+        activeViewId,
+        activeViewModalOpen: false
+      },
+      this.reconcileActiveView
+    );
+  }
+
   toggleActiveView(dir = 1) {
     const currentIndex = findIndex(this.state.views, {
       id: parseInt(this.state.activeViewId)
@@ -530,10 +541,29 @@ class App extends Component {
     });
   }
 
+  toggleActiveViewModal() {
+    this.setState(
+      {
+        ...this.state,
+        activeViewModalOpen: !this.state.activeViewModalOpen
+      },
+      () => {
+        console.log(this.state.activeViewModalOpen);
+      }
+    );
+  }
+
   closeAddViewModal() {
     this.setState({
       ...this.state,
       addViewModalOpen: false
+    });
+  }
+
+  closeActiveViewModal() {
+    this.setState({
+      ...this.state,
+      activeViewModalOpen: false
     });
   }
 
@@ -559,7 +589,12 @@ class App extends Component {
   }
 
   render() {
-    const { views, addViewModalOpen, activeViewId } = this.state;
+    const {
+      views,
+      addViewModalOpen,
+      activeViewModalOpen,
+      activeViewId
+    } = this.state;
     let view = views.filter(view => view.id === parseInt(activeViewId))[0];
     if (!view && views && views.length > 0) {
       view = views[0];
@@ -586,7 +621,17 @@ class App extends Component {
         closeModal={this.closeAddViewModal.bind(this)}
       />
     );
-    const modalOpen = addViewModalOpen;
+    const activeViewModal = !activeViewModalOpen ? (
+      ""
+    ) : (
+      <ActiveViewModal
+        views={views}
+        closeModal={this.closeActiveViewModal.bind(this)}
+        setActiveView={this.setActiveView.bind(this)}
+      />
+    );
+
+    const modalOpen = addViewModalOpen || activeViewModalOpen;
     const appClasses = ["app", modalOpen ? "app--modal-open" : ""].join(" ");
 
     const nextView =
@@ -630,7 +675,7 @@ class App extends Component {
         <button
           className="app__toggle-active-view"
           onClick={() => {
-            this.toggleActiveView();
+            this.toggleActiveViewModal();
           }}
         >
           switch view
@@ -690,7 +735,10 @@ class App extends Component {
             </ul>
           </div>
         </div>
-        <div className="app__modals">{addViewModal}</div>
+        <div className="app__modals">
+          {addViewModal}
+          {activeViewModal}
+        </div>
       </div>
     );
   }
