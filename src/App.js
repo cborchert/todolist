@@ -12,7 +12,7 @@ class App extends Component {
     super(props);
     this.v = "v0.0.1";
     //Debugging :)
-    // localStorage.clear();
+    localStorage.clear();
     const localTasks = localStorage.getItem("tasks" + this.v);
     const lastSeen = localStorage.getItem("lastSeen" + this.v);
     const appName = localStorage.getItem("appName" + this.v);
@@ -117,17 +117,29 @@ class App extends Component {
     );
   }
 
-  removeTask(taskId) {
+  removeTask(taskId, removeChildren = true) {
+    console.log("removeChildren", removeChildren);
+    //if removeChildren === false, we need to unparent the children
     this.setState(
       {
         ...this.state,
         tasks: this.state.tasks
-          .filter(task => task.id !== taskId)
+          //remove task (and children if removeChildren === true)
+          .filter(task => {
+            let removeTask =
+              task.id === taskId || (removeChildren && task.parent === taskId);
+            return !removeTask;
+          })
+          //make changes to the other tasks
           .map(task => ({
             ...task,
+            //remove task from each parent
             children: task.children
               ? task.children.filter(childId => childId !== taskId)
-              : []
+              : [],
+            //set parent to false if !removeChildren and parent is removed
+            parent:
+              !removeChildren && task.parent === taskId ? false : task.parent
           }))
       },
       this.reconcileActiveView
