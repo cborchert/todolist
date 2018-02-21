@@ -16,7 +16,6 @@ class App extends Component {
     const lastSeen = localStorage.getItem("lastSeen" + this.v);
     const appName = localStorage.getItem("appName" + this.v);
     const activeViewId = localStorage.getItem("activeViewId" + this.v);
-    console.log(activeViewId);
     const views = localStorage.getItem("views" + this.v);
     this.state = {
       tasks: localTasks ? JSON.parse(localTasks) : [],
@@ -34,7 +33,7 @@ class App extends Component {
           ],
       appName: appName ? appName : "your amazing to do list (edit)",
       lastSeen,
-      activeViewId: views ? activeViewId : -1,
+      activeViewId: views ? parseFloat(activeViewId) : -1,
       addViewModalOpen: false,
       activeViewModalOpen: false
     };
@@ -542,15 +541,10 @@ class App extends Component {
   }
 
   toggleActiveViewModal() {
-    this.setState(
-      {
-        ...this.state,
-        activeViewModalOpen: !this.state.activeViewModalOpen
-      },
-      () => {
-        console.log(this.state.activeViewModalOpen);
-      }
-    );
+    this.setState({
+      ...this.state,
+      activeViewModalOpen: !this.state.activeViewModalOpen
+    });
   }
 
   closeAddViewModal() {
@@ -628,6 +622,7 @@ class App extends Component {
         views={views}
         closeModal={this.closeActiveViewModal.bind(this)}
         setActiveView={this.setActiveView.bind(this)}
+        activeViewId={this.state.activeViewId}
       />
     );
 

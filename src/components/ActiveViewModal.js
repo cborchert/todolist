@@ -27,6 +27,9 @@ class ActiveViewModal extends Component {
                 }}
               >
                 {view.title}
+                {parseFloat(this.props.activeViewId) === view.id
+                  ? " (current view) "
+                  : ""}
               </li>
             ))}
           </ul>
